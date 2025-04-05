@@ -1,0 +1,15 @@
+name: shrink
+description: "A new Flutter package project."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+
+dependencies:
+  archive: ^3.4.10
+  more: ^4.5.0
+
+dev_dependencies:
+  test: ^1.21.0
+  lints: ^2.0.0
