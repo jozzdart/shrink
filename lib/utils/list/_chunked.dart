@@ -1,8 +1,6 @@
-import 'dart:typed_data';
+part of 'unique.dart';
 
-import 'variant.dart';
-
-Uint8List encodeChunked(List<int> ids) {
+Uint8List _encodeChunked(List<int> ids) {
   if (ids.isEmpty) return Uint8List(0);
 
   // Remove duplicates and sort
@@ -24,7 +22,7 @@ Uint8List encodeChunked(List<int> ids) {
     final List<int> localIds = entry.value;
 
     // Header: chunkKey
-    writeVarint(buffer, chunkKey);
+    _writeVarint(buffer, chunkKey);
 
     if (localIds.length >= 128) {
       // Dense: use 256-bit bitmask (32 bytes)
@@ -40,11 +38,11 @@ Uint8List encodeChunked(List<int> ids) {
     } else {
       // Sparse: use delta + varint
       buffer.addByte(1); // 1 = sparse list mode
-      writeVarint(buffer, localIds.length);
+      _writeVarint(buffer, localIds.length);
       int last = 0;
       for (int i = 0; i < localIds.length; i++) {
         final delta = i == 0 ? localIds[i] : localIds[i] - last;
-        writeVarint(buffer, delta);
+        _writeVarint(buffer, delta);
         last = localIds[i];
       }
     }
@@ -54,13 +52,13 @@ Uint8List encodeChunked(List<int> ids) {
 }
 
 /// Decodes a chunked-encoded Uint8List back into the original list of integers.
-List<int> decodeChunked(Uint8List bytes) {
+List<int> _decodeChunked(Uint8List bytes) {
   final List<int> result = [];
   int offset = 0;
 
   while (offset < bytes.length) {
     // Read chunk key
-    final chunkKeyResult = readVarint(bytes, offset);
+    final chunkKeyResult = _readVarint(bytes, offset);
     final int chunkKey = chunkKeyResult.value;
     offset = chunkKeyResult.offset;
 
@@ -82,13 +80,13 @@ List<int> decodeChunked(Uint8List bytes) {
       }
     } else {
       // Sparse list mode
-      final countResult = readVarint(bytes, offset);
+      final countResult = _readVarint(bytes, offset);
       final int count = countResult.value;
       offset = countResult.offset;
 
       int last = 0;
       for (int i = 0; i < count; i++) {
-        final deltaResult = readVarint(bytes, offset);
+        final deltaResult = _readVarint(bytes, offset);
         final int delta = deltaResult.value;
         offset = deltaResult.offset;
 

@@ -1,8 +1,8 @@
-import 'dart:typed_data';
+part of 'unique.dart';
 
 /// Encodes a sorted list of integers using delta + varint encoding.
 /// Returns a Uint8List representing the encoded bytes.
-Uint8List encodeDeltaVarint(List<int> ids) {
+Uint8List _encodeDeltaVarint(List<int> ids) {
   if (ids.isEmpty) return Uint8List(0);
 
   // Remove duplicates and sort
@@ -12,24 +12,24 @@ Uint8List encodeDeltaVarint(List<int> ids) {
   final buffer = BytesBuilder();
 
   // Encode first ID directly
-  writeVarint(buffer, uniqueIds[0]);
+  _writeVarint(buffer, uniqueIds[0]);
 
   for (int i = 1; i < uniqueIds.length; i++) {
     final delta = uniqueIds[i] - uniqueIds[i - 1];
-    writeVarint(buffer, delta);
+    _writeVarint(buffer, delta);
   }
 
   return buffer.toBytes();
 }
 
 /// Decodes a Uint8List encoded with delta + varint back into a list of integers.
-List<int> decodeDeltaVarint(Uint8List bytes) {
+List<int> _decodeDeltaVarint(Uint8List bytes) {
   final List<int> result = [];
   int offset = 0;
 
   int? last;
   while (offset < bytes.length) {
-    final read = readVarint(bytes, offset);
+    final read = _readVarint(bytes, offset);
     final value = read.value;
     offset = read.offset;
 
@@ -42,7 +42,7 @@ List<int> decodeDeltaVarint(Uint8List bytes) {
 }
 
 /// Writes a single integer as a varint into the buffer.
-void writeVarint(BytesBuilder buffer, int value) {
+void _writeVarint(BytesBuilder buffer, int value) {
   while (value >= 0x80) {
     buffer.addByte((value & 0x7F) | 0x80);
     value >>= 7;
@@ -52,7 +52,7 @@ void writeVarint(BytesBuilder buffer, int value) {
 
 /// Reads a varint from a byte array starting at [offset].
 /// Returns both the decoded value and the new offset.
-ReadVarintResult readVarint(Uint8List bytes, int offset) {
+_ReadVarintResult _readVarint(Uint8List bytes, int offset) {
   int value = 0;
   int shift = 0;
   int b;
@@ -63,12 +63,12 @@ ReadVarintResult readVarint(Uint8List bytes, int offset) {
     shift += 7;
   } while ((b & 0x80) != 0);
 
-  return ReadVarintResult(value, offset);
+  return _ReadVarintResult(value, offset);
 }
 
-class ReadVarintResult {
+class _ReadVarintResult {
   final int value;
   final int offset;
 
-  ReadVarintResult(this.value, this.offset);
+  _ReadVarintResult(this.value, this.offset);
 }

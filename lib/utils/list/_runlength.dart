@@ -1,10 +1,8 @@
-import 'dart:typed_data';
-
-import 'variant.dart';
+part of 'unique.dart';
 
 /// Encodes a sorted list of integers using skip-run (0s-1s) compression.
 /// Useful for sparse data with long gaps.
-Uint8List encodeRuns(List<int> ids) {
+Uint8List _encodeRuns(List<int> ids) {
   if (ids.isEmpty) return Uint8List(0);
 
   // Remove duplicates and sort
@@ -17,7 +15,7 @@ Uint8List encodeRuns(List<int> ids) {
 
   for (int i = 0; i < uniqueIds.length;) {
     final int skip = uniqueIds[i] - (last + 1);
-    writeVarint(buffer, skip);
+    _writeVarint(buffer, skip);
 
     int runLength = 1;
     last = uniqueIds[i];
@@ -27,7 +25,7 @@ Uint8List encodeRuns(List<int> ids) {
       runLength++;
     }
 
-    writeVarint(buffer, runLength);
+    _writeVarint(buffer, runLength);
     i += runLength;
   }
 
@@ -35,20 +33,20 @@ Uint8List encodeRuns(List<int> ids) {
 }
 
 /// Decodes a skip-run compressed Uint8List back into the original list of integers.
-List<int> decodeRuns(Uint8List bytes) {
+List<int> _decodeRuns(Uint8List bytes) {
   final List<int> result = [];
   int offset = 0;
   int current = -1;
 
   while (offset < bytes.length) {
-    final skipResult = readVarint(bytes, offset);
+    final skipResult = _readVarint(bytes, offset);
     offset = skipResult.offset;
 
     // Calculate next value after skipping
     current = current + skipResult.value + 1;
     int startValue = current;
 
-    final runResult = readVarint(bytes, offset);
+    final runResult = _readVarint(bytes, offset);
     offset = runResult.offset;
     final int runLength = runResult.value;
 

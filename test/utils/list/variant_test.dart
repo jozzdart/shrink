@@ -1,82 +1,82 @@
 import 'package:test/test.dart';
-import 'package:shrink/utils/list/methods/variant.dart';
+import 'package:shrink/utils/list/unique.dart';
 
 import '../list_test_data_generator.dart';
 
 void main() {
   group('Delta-Varint List Compression Tests', () {
-    test('encodeDeltaVarint and decodeDeltaVarint work with empty list', () {
+    test('deltaVarint compression works with empty list', () {
       final emptyList = <int>[];
 
-      final encoded = encodeDeltaVarint(emptyList);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(emptyList, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(emptyList));
     });
 
-    test('encodeDeltaVarint and decodeDeltaVarint work with single value', () {
+    test('deltaVarint compression works with single value', () {
       final singleValue = [42];
 
-      final encoded = encodeDeltaVarint(singleValue);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(singleValue, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(singleValue));
     });
 
-    test('encodeDeltaVarint and decodeDeltaVarint work with small sorted list', () {
+    test('deltaVarint compression works with small sorted list', () {
       final smallList = [1, 5, 10, 15, 20];
 
-      final encoded = encodeDeltaVarint(smallList);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(smallList, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(smallList));
     });
 
-    test('encodeDeltaVarint and decodeDeltaVarint work with unsorted input', () {
+    test('deltaVarint compression works with unsorted input', () {
       final unsortedList = [20, 5, 15, 1, 10];
       final sortedList = [1, 5, 10, 15, 20];
 
-      final encoded = encodeDeltaVarint(unsortedList);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(unsortedList, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       // Delta encoding sorts the list
       expect(decoded, equals(sortedList));
     });
 
-    test('encodeDeltaVarint removes duplicates', () {
+    test('deltaVarint compression removes duplicates', () {
       final listWithDuplicates = [1, 5, 5, 10, 10, 10, 20];
       final uniqueList = [1, 5, 10, 20]; // Duplicates removed and sorted
 
-      final encoded = encodeDeltaVarint(listWithDuplicates);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(listWithDuplicates, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       // Verify that duplicates were removed
       expect(decoded, equals(uniqueList));
     });
 
-    test('encodeDeltaVarint and decodeDeltaVarint work with sequential values', () {
+    test('deltaVarint compression works with sequential values', () {
       final sequentialList = List.generate(100, (i) => i);
 
-      final encoded = encodeDeltaVarint(sequentialList);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(sequentialList, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sequentialList));
     });
 
-    test('encodeDeltaVarint and decodeDeltaVarint work with sparse list', () {
+    test('deltaVarint compression works with sparse list', () {
       final sparseList = ListTestDataGenerator.generateSparseList(size: 100, sparsity: 50.0);
 
-      final encoded = encodeDeltaVarint(sparseList);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(sparseList, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sparseList));
     });
 
-    test('encodeDeltaVarint and decodeDeltaVarint work with chunked list', () {
+    test('deltaVarint compression works with chunked list', () {
       final chunkedList = ListTestDataGenerator.generateChunkedList(size: 200, chunkSize: 10, gapRatio: 5.0);
 
-      final encoded = encodeDeltaVarint(chunkedList);
-      final decoded = decodeDeltaVarint(encoded);
+      final encoded = shrinkUniqueManual(chunkedList, UniqueCompressionMethod.deltaVarint);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(chunkedList));
     });
@@ -91,8 +91,8 @@ void main() {
       ];
 
       for (final testCase in testCases) {
-        final encoded = encodeDeltaVarint(testCase);
-        final decoded = decodeDeltaVarint(encoded);
+        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.deltaVarint);
+        final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase), reason: 'Failed with list of size ${testCase.length}');
       }
@@ -109,8 +109,8 @@ void main() {
         final testCase = testSeries[i];
         final sparsity = sparsityFactors[i];
 
-        final encoded = encodeDeltaVarint(testCase);
-        final decoded = decodeDeltaVarint(encoded);
+        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.deltaVarint);
+        final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase), reason: 'Failed with sparsity factor $sparsity');
       }
@@ -128,8 +128,8 @@ void main() {
         final testCase = testSeries[i];
         final chunkSize = chunkSizes[i];
 
-        final encoded = encodeDeltaVarint(testCase);
-        final decoded = decodeDeltaVarint(encoded);
+        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.deltaVarint);
+        final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase), reason: 'Failed with chunk size $chunkSize');
       }

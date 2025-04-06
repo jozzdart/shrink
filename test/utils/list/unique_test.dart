@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:shrink/utils/list/unique.dart';
-import 'package:shrink/utils/list/methods/methods.dart';
 
 import '../list_test_data_generator.dart';
 
@@ -145,10 +144,10 @@ void main() {
       // Compare against individual methods
       final methodSizes = {
         'No shrink': noShrinkSize,
-        'DeltaVarint': encodeDeltaVarint(mixedTestCase).length,
-        'RunLength': encodeRuns(mixedTestCase).length,
-        'Chunked': encodeChunked(mixedTestCase).length,
-        'Bitmask': encodeBitmask(mixedTestCase).length,
+        'DeltaVarint': shrinkUniqueManual(mixedTestCase, UniqueCompressionMethod.deltaVarint).length,
+        'RunLength': shrinkUniqueManual(mixedTestCase, UniqueCompressionMethod.runLength).length,
+        'Chunked': shrinkUniqueManual(mixedTestCase, UniqueCompressionMethod.chunked).length,
+        'Bitmask': shrinkUniqueManual(mixedTestCase, UniqueCompressionMethod.bitmask).length,
         'UniqueCompression': uniqueCompressed.length,
       };
 
@@ -228,9 +227,9 @@ Map<UniqueCompressionMethod, int> _getCompressionSizes(List<int> ids) {
   final sortedIds = [...ids]..sort();
 
   return {
-    UniqueCompressionMethod.deltaVarint: encodeDeltaVarint(sortedIds).length,
-    UniqueCompressionMethod.runLength: encodeRuns(sortedIds).length,
-    UniqueCompressionMethod.chunked: encodeChunked(sortedIds).length,
-    UniqueCompressionMethod.bitmask: encodeBitmask(sortedIds).length,
+    UniqueCompressionMethod.deltaVarint: shrinkUniqueManual(sortedIds, UniqueCompressionMethod.deltaVarint).length,
+    UniqueCompressionMethod.runLength: shrinkUniqueManual(sortedIds, UniqueCompressionMethod.runLength).length,
+    UniqueCompressionMethod.chunked: shrinkUniqueManual(sortedIds, UniqueCompressionMethod.chunked).length,
+    UniqueCompressionMethod.bitmask: shrinkUniqueManual(sortedIds, UniqueCompressionMethod.bitmask).length,
   };
 }

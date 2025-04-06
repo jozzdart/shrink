@@ -1,8 +1,8 @@
-import 'dart:typed_data';
+part of 'unique.dart';
 
 /// Encodes a list of integers into a bitmask representation.
 /// Returns a Uint8List with a 4-byte prefix indicating the length of the bitmask.
-Uint8List encodeBitmask(List<int> ids) {
+Uint8List _encodeBitmask(List<int> ids) {
   // Remove duplicates
   final uniqueIds = ids.toSet().toList();
 
@@ -38,7 +38,7 @@ Uint8List encodeBitmask(List<int> ids) {
 
 /// Decodes a bitmask representation into a list of integers.
 /// The input should have a 4-byte prefix indicating the length of the bitmask.
-List<int> decodeBitmask(Uint8List bytes) {
+List<int> _decodeBitmask(Uint8List bytes) {
   // Extract the bit length from the first 4 bytes
   final bitLength = ByteData.view(bytes.buffer, bytes.offsetInBytes, 4).getUint32(0, Endian.big);
 

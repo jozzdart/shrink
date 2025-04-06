@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:shrink/utils/list/methods/methods.dart';
+import 'package:shrink/utils/list/unique.dart';
 
 import '../list_test_data_generator.dart';
 
@@ -81,8 +81,8 @@ List<_EncodingResult> _compareAllMethods(List<int> data) {
 
   // Test Bitmask encoding
   try {
-    final encoded = encodeBitmask(data);
-    final decoded = decodeBitmask(encoded);
+    final encoded = shrinkUniqueManual(data, UniqueCompressionMethod.bitmask);
+    final decoded = restoreUnique(encoded);
     final correct = _listsEqual(data, decoded);
 
     results.add(_EncodingResult(
@@ -102,8 +102,8 @@ List<_EncodingResult> _compareAllMethods(List<int> data) {
 
   // Test Delta-Varint encoding
   try {
-    final encoded = encodeDeltaVarint(data);
-    final decoded = decodeDeltaVarint(encoded);
+    final encoded = shrinkUniqueManual(data, UniqueCompressionMethod.deltaVarint);
+    final decoded = restoreUnique(encoded);
     final correct = _listsEqual(data, decoded);
 
     results.add(_EncodingResult(
@@ -123,8 +123,8 @@ List<_EncodingResult> _compareAllMethods(List<int> data) {
 
   // Test Run-Length encoding
   try {
-    final encoded = encodeRuns(data);
-    final decoded = decodeRuns(encoded);
+    final encoded = shrinkUniqueManual(data, UniqueCompressionMethod.runLength);
+    final decoded = restoreUnique(encoded);
 
     // For run-length, compare sets since the exact order/duplicates might not be preserved
     final correct = _setsEqual(data, decoded);
@@ -146,8 +146,8 @@ List<_EncodingResult> _compareAllMethods(List<int> data) {
 
   // Test Chunked encoding
   try {
-    final encoded = encodeChunked(data);
-    final decoded = decodeChunked(encoded);
+    final encoded = shrinkUniqueManual(data, UniqueCompressionMethod.chunked);
+    final decoded = restoreUnique(encoded);
     final correct = _listsEqual(data, decoded);
 
     results.add(_EncodingResult(

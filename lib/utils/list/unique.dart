@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
-import 'methods/methods.dart';
+part '_bitmask.dart';
+part '_chunked.dart';
+part '_runlength.dart';
+part '_variant.dart';
 
 /// Enum representing different compression methods for unique integer lists
 enum UniqueCompressionMethod {
@@ -37,10 +40,10 @@ Uint8List shrinkUnique(List<int> ids) {
 
   // Try each compression method
   final List<Uint8List> compressed = [
-    encodeDeltaVarint(sortedIds),
-    encodeRuns(sortedIds),
-    encodeChunked(sortedIds),
-    encodeBitmask(sortedIds),
+    _encodeDeltaVarint(sortedIds),
+    _encodeRuns(sortedIds),
+    _encodeChunked(sortedIds),
+    _encodeBitmask(sortedIds),
   ];
 
   // Find the most efficient compression method
@@ -84,12 +87,51 @@ List<int> restoreUnique(Uint8List compressed) {
   // Decompress based on method
   switch (method) {
     case UniqueCompressionMethod.deltaVarint:
-      return decodeDeltaVarint(data);
+      return _decodeDeltaVarint(data);
     case UniqueCompressionMethod.runLength:
-      return decodeRuns(data);
+      return _decodeRuns(data);
     case UniqueCompressionMethod.chunked:
-      return decodeChunked(data);
+      return _decodeChunked(data);
     case UniqueCompressionMethod.bitmask:
-      return decodeBitmask(data);
+      return _decodeBitmask(data);
   }
+}
+
+/// Compresses a list of unique integers using a specified method.
+///
+/// This function allows you to manually select the compression algorithm instead
+/// of using the automatic selection in [shrinkUnique].
+///
+/// - [ids]: The list of integers to compress
+/// - [method]: The compression method to use
+///
+/// Returns a compressed [Uint8List] representation of the integer list.
+/// The first byte indicates the method used, following the same format as [shrinkUnique].
+Uint8List shrinkUniqueManual(List<int> ids, UniqueCompressionMethod method) {
+  // Make a copy and ensure the list is sorted
+  final sortedIds = [...ids]..sort();
+
+  // Apply the specified compression method
+  Uint8List compressed;
+  switch (method) {
+    case UniqueCompressionMethod.deltaVarint:
+      compressed = _encodeDeltaVarint(sortedIds);
+      break;
+    case UniqueCompressionMethod.runLength:
+      compressed = _encodeRuns(sortedIds);
+      break;
+    case UniqueCompressionMethod.chunked:
+      compressed = _encodeChunked(sortedIds);
+      break;
+    case UniqueCompressionMethod.bitmask:
+      compressed = _encodeBitmask(sortedIds);
+      break;
+  }
+
+  // Create result with method byte + compressed data
+  final result = Uint8List(compressed.length + 1);
+  result[0] = method.index; // First byte stores the method enum ordinal
+  result.setRange(1, result.length, compressed);
+
+  return result;
 }

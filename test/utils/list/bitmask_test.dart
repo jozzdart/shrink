@@ -1,81 +1,81 @@
 import 'package:test/test.dart';
-import 'package:shrink/utils/list/methods/bitmask.dart';
+import 'package:shrink/utils/list/unique.dart';
 
 import '../list_test_data_generator.dart';
 
 void main() {
   group('Bitmask List Compression Tests', () {
-    test('encodeBitmask and decodeBitmask work with empty list', () {
+    test('bitmask compression works with empty list', () {
       final emptyList = <int>[];
 
-      final encoded = encodeBitmask(emptyList);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(emptyList, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(emptyList));
     });
 
-    test('encodeBitmask and decodeBitmask work with small list', () {
+    test('bitmask compression works with small list', () {
       final smallList = [1, 5, 10, 15, 20];
 
-      final encoded = encodeBitmask(smallList);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(smallList, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(smallList));
     });
 
-    test('encodeBitmask and decodeBitmask work with single value', () {
+    test('bitmask compression works with single value', () {
       final singleValue = [42];
 
-      final encoded = encodeBitmask(singleValue);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(singleValue, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(singleValue));
     });
 
-    test('encodeBitmask and decodeBitmask work with large consecutive values', () {
+    test('bitmask compression works with large consecutive values', () {
       final largeValues = List.generate(100, (i) => i * 10);
 
-      final encoded = encodeBitmask(largeValues);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(largeValues, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(largeValues));
     });
 
-    test('encodeBitmask and decodeBitmask work with sparse list', () {
+    test('bitmask compression works with sparse list', () {
       final sparseList = ListTestDataGenerator.generateSparseList(size: 100, sparsity: 50.0);
 
-      final encoded = encodeBitmask(sparseList);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(sparseList, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sparseList));
     });
 
-    test('encodeBitmask and decodeBitmask work with chunked list', () {
+    test('bitmask compression works with chunked list', () {
       final chunkedList = ListTestDataGenerator.generateChunkedList(size: 200, chunkSize: 10, gapRatio: 5.0);
 
-      final encoded = encodeBitmask(chunkedList);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(chunkedList, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(chunkedList));
     });
 
-    test('encodeBitmask works with unsorted input', () {
+    test('bitmask compression works with unsorted input', () {
       final unsortedList = [20, 5, 15, 1, 10];
       final sortedList = [1, 5, 10, 15, 20];
 
-      final encoded = encodeBitmask(unsortedList);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(unsortedList, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       // Bitmask doesn't care about order - it just records presence
       expect(decoded, equals(sortedList));
     });
 
-    test('encodeBitmask removes duplicates', () {
+    test('bitmask compression removes duplicates', () {
       final listWithDuplicates = [1, 5, 5, 10, 10, 10, 20];
       final uniqueList = [1, 5, 10, 20];
 
-      final encoded = encodeBitmask(listWithDuplicates);
-      final decoded = decodeBitmask(encoded);
+      final encoded = shrinkUniqueManual(listWithDuplicates, UniqueCompressionMethod.bitmask);
+      final decoded = restoreUnique(encoded);
 
       // Verify that duplicates were removed
       expect(decoded, equals(uniqueList));
@@ -91,8 +91,8 @@ void main() {
       ];
 
       for (final testCase in testCases) {
-        final encoded = encodeBitmask(testCase);
-        final decoded = decodeBitmask(encoded);
+        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.bitmask);
+        final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase), reason: 'Failed with list of size ${testCase.length}');
       }
@@ -109,8 +109,8 @@ void main() {
         final testCase = testSeries[i];
         final sparsity = sparsityFactors[i];
 
-        final encoded = encodeBitmask(testCase);
-        final decoded = decodeBitmask(encoded);
+        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.bitmask);
+        final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase), reason: 'Failed with sparsity factor $sparsity');
       }
