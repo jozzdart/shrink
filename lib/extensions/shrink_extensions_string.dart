@@ -14,7 +14,7 @@ extension ShrinkExtensionsString on String {
   /// to reduce its size. For decompression, use [Uint8List.restoreText].
   ///
   /// Returns a [Uint8List] containing the compressed string data.
-  Uint8List shrinkText() => utils.shrinkText(this);
+  Uint8List shrink() => utils.shrinkText(this);
 
   /// Decodes this base64-encoded string to a [Uint8List].
   ///

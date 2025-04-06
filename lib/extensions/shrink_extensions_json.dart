@@ -14,5 +14,5 @@ extension ShrinkExtensionsJson on Map<String, dynamic> {
   /// For decompression, use [Uint8List.restoreJson].
   ///
   /// Returns a [Uint8List] containing the compressed JSON data.
-  Uint8List shrinkJson() => utils.shrinkJson(this);
+  Uint8List shrink() => utils.shrinkJson(this);
 }

@@ -50,4 +50,19 @@ abstract class Shrink {
   static Uint8List unique(List<int> uniqueList) {
     return shrinkUnique(uniqueList);
   }
+
+  /// Compresses a list of unique integers using a specified compression method.
+  ///
+  /// Important: The automatic [unique] method is recommended over this manual option
+  /// in most cases, as it intelligently selects the optimal compression algorithm,
+  /// which can yield significantly better compression ratios for different data patterns.
+  ///
+  /// Parameters:
+  ///   [uniqueList]: The list of unique integers to compress
+  ///   [method]: The specific compression method to use
+  ///
+  /// Returns a compressed [Uint8List].
+  static Uint8List uniqueManual(List<int> uniqueList, UniqueCompressionMethod method) {
+    return shrinkUniqueManual(uniqueList, method);
+  }
 }

@@ -99,6 +99,10 @@ List<int> restoreUnique(Uint8List compressed) {
 
 /// Compresses a list of unique integers using a specified method.
 ///
+/// Important: The automatic [shrinkUnique] function is recommended over this manual option
+/// in most cases, as it intelligently selects the optimal compression algorithm,
+/// which can yield significantly better compression ratios for different data patterns.
+///
 /// This function allows you to manually select the compression algorithm instead
 /// of using the automatic selection in [shrinkUnique].
 ///
