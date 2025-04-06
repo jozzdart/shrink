@@ -4,14 +4,33 @@ import 'methods/methods.dart';
 
 /// Enum representing different compression methods for unique integer lists
 enum UniqueCompressionMethod {
+  /// Uses delta encoding with variable-length integers
   deltaVarint,
+
+  /// Uses run-length encoding for consecutive integers
   runLength,
+
+  /// Splits the list into chunks and encodes each chunk separately
   chunked,
+
+  /// Uses a bitmap representation for dense integer sets
   bitmask,
 }
 
 /// Compresses a list of unique integers using the most efficient method.
-/// Returns a Uint8List where the first byte indicates the compression method used.
+///
+/// This function automatically tries multiple compression algorithms and selects
+/// the one that produces the smallest result for the given input:
+///
+/// - Delta-encoding with variable-length integers (good for sorted lists with small gaps)
+/// - Run-length encoding (good for lists with consecutive runs of integers)
+/// - Chunked encoding (good for lists with clustered values)
+/// - Bitmask encoding (good for dense sets of integers within a limited range)
+///
+/// The first byte of the returned [Uint8List] indicates the compression method used,
+/// followed by the compressed data.
+///
+/// Returns a compressed [Uint8List] representation of the integer list.
 Uint8List shrinkUnique(List<int> ids) {
   // Make a copy and ensure the list is sorted
   final sortedIds = [...ids]..sort();
@@ -43,7 +62,13 @@ Uint8List shrinkUnique(List<int> ids) {
   return result;
 }
 
-/// Decompresses a Uint8List created by shrinkUnique back to a list of integers.
+/// Decompresses a [Uint8List] created by [shrinkUnique] back to a list of integers.
+///
+/// This function reads the compression method from the first byte and then
+/// applies the appropriate decompression algorithm to restore the original list.
+///
+/// Returns the original list of unique integers.
+/// Throws an error if the compressed data is corrupted or uses an unknown method.
 List<int> restoreUnique(Uint8List compressed) {
   if (compressed.isEmpty) {
     return [];
