@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:shrink/core/shrink_utils.dart';
+import 'package:shrink/shrink.dart';
 
 void main() {
   group('ShrinkUtils compression tests', () {
@@ -18,7 +18,7 @@ void main() {
       print('Original text data size: $originalLength bytes');
 
       // Test compression to binary
-      final Uint8List compressed = ShrinkUtils.compressBytes(originalData);
+      final Uint8List compressed = Shrink.compressBytes(originalData);
       final int compressedLength = compressed.length;
 
       print('Compressed binary size: $compressedLength bytes');
@@ -26,20 +26,20 @@ void main() {
       print('Binary space saved: ${originalLength - compressedLength} bytes (${((1 - compressedLength / originalLength) * 100).toStringAsFixed(2)}%)');
 
       // Test prefixed and compressed
-      final Uint8List prefixed = ShrinkUtils.addLengthPrefix(originalData, originalLength);
-      final Uint8List prefixedCompressed = ShrinkUtils.compressBytes(prefixed);
+      final Uint8List prefixed = Shrink.addLengthPrefix(originalData, originalLength);
+      final Uint8List prefixedCompressed = Shrink.compressBytes(prefixed);
 
       print('Prefixed and compressed binary size: ${prefixedCompressed.length} bytes');
 
       // Test conversion to string (base64)
-      final String base64String = ShrinkUtils.encodeWithLengthPrefix(originalData, originalLength);
+      final String base64String = Shrink.encodeWithLengthPrefix(originalData, originalLength);
       final int stringLength = base64String.length;
 
       print('Base64 encoded string size: $stringLength bytes/chars');
       print('String encoding ratio: ${(stringLength / originalLength * 100).toStringAsFixed(2)}% of original');
 
       // Verify round-trip
-      final ShrunkPayload decoded = ShrinkUtils.decodeWithLengthPrefix(base64String);
+      final ShrunkPayload decoded = Shrink.decodeWithLengthPrefix(base64String);
       expect(decoded.length, equals(originalLength));
       expect(decoded.data, equals(originalData));
 
@@ -57,7 +57,7 @@ void main() {
       print('\nOriginal binary data size: $originalSize bytes');
 
       // Compress to binary
-      final Uint8List compressed = ShrinkUtils.compressBytes(binaryData);
+      final Uint8List compressed = Shrink.compressBytes(binaryData);
       final int compressedSize = compressed.length;
 
       print('Compressed binary size: $compressedSize bytes');
@@ -65,14 +65,14 @@ void main() {
       print('Binary space saved: ${originalSize - compressedSize} bytes (${((1 - compressedSize / originalSize) * 100).toStringAsFixed(2)}%)');
 
       // Encode to string
-      final String base64String = ShrinkUtils.encodeWithLengthPrefix(binaryData, originalSize);
+      final String base64String = Shrink.encodeWithLengthPrefix(binaryData, originalSize);
       final int stringSize = base64String.length;
 
       print('Base64 encoded string size: $stringSize bytes/chars');
       print('String encoding ratio: ${(stringSize / originalSize * 100).toStringAsFixed(2)}% of original');
 
       // Verify round-trip
-      final ShrunkPayload decoded = ShrinkUtils.decodeWithLengthPrefix(base64String);
+      final ShrunkPayload decoded = Shrink.decodeWithLengthPrefix(base64String);
       expect(decoded.length, equals(originalSize));
       expect(decoded.data, equals(binaryData));
 
@@ -92,7 +92,7 @@ void main() {
       print('\nLarge repetitive data size: $originalSize bytes');
 
       // Compress to binary
-      final Uint8List compressed = ShrinkUtils.compressBytes(originalData);
+      final Uint8List compressed = Shrink.compressBytes(originalData);
       final int compressedSize = compressed.length;
 
       print('Compressed binary size: $compressedSize bytes');
@@ -100,14 +100,14 @@ void main() {
       print('Binary space saved: ${originalSize - compressedSize} bytes (${((1 - compressedSize / originalSize) * 100).toStringAsFixed(2)}%)');
 
       // Encode to string with the full pipeline
-      final String base64String = ShrinkUtils.encodeWithLengthPrefix(originalData, originalSize);
+      final String base64String = Shrink.encodeWithLengthPrefix(originalData, originalSize);
       final int stringSize = base64String.length;
 
       print('Base64 encoded string size: $stringSize bytes/chars');
       print('String encoding ratio: ${(stringSize / originalSize * 100).toStringAsFixed(2)}% of original');
 
       // Verify data integrity with round-trip
-      final ShrunkPayload decoded = ShrinkUtils.decodeWithLengthPrefix(base64String);
+      final ShrunkPayload decoded = Shrink.decodeWithLengthPrefix(base64String);
       expect(decoded.length, equals(originalSize));
       expect(decoded.data, equals(originalData));
 
