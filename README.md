@@ -39,13 +39,13 @@ Whether you're building a Flutter app or a server-side Dart service, `shrink` he
 Compression is as easy as calling `.shrink()` on your data — no setup, no boilerplate.
 
 ```dart
-final shrinked = data.shrink(); // ⬇️ Compress your data
+final compressed = data.shrink(); // ⬇️ Compress your data
 ```
 
 Or use the static `Shrink` class for clarity:
 
 ```dart
-final shrinked = Shrink.json(data);
+final compressed = Shrink.json(data);
 ```
 
 > Works with: `String`, `Map<String, dynamic>`, `Uint8List`, and `List<int>` (unique IDs)
@@ -57,13 +57,13 @@ final shrinked = Shrink.json(data);
 To get your original data back, just call `.restoreX()` on the compressed value:
 
 ```dart
-final restored = shrinked.restoreJson(); // ⬆️ Restore original content
+final restored = compressed.restoreJson(); // ⬆️ Restore original content
 ```
 
 Or use the static `Restore` class:
 
 ```dart
-final restored = Restore.json(shrinked);
+final restored = Restore.json(compressed);
 ```
 
 > Every `shrink` operation is **lossless** — the restored value is identical to the original.
