@@ -179,7 +179,9 @@ That’s why compression can be so effective even on data that doesn’t look ob
 
 Shrink leverages this reality and combines compression strategies to achieve significant reductions for most data types.
 
-#### 📦 Compression Results (Bytes & Text)
+---
+
+## 📦 Compression Results (Bytes & Text)
 
 | Data Pattern       | Input Size (Bytes) | Shrink Size | Space Saved | Factor    |
 | ------------------ | ------------------ | ----------- | ----------- | --------- |
@@ -191,7 +193,7 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 
 > 💡 In Shrink, when compression doesn’t help, it’s intelligently skipped — so there’s no overhead.
 
-### 📄 JSON Shrinking
+## 📄 JSON Shrinking
 
 | Type                  | Original Size | Shrink Size | Space Saved | Factor    |
 | --------------------- | ------------- | ----------- | ----------- | --------- |
@@ -202,7 +204,7 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 | Mixed Content         | 1,632         | 403         | 75.31%      | 4.05×     |
 | Large (12101 chars)   | 12,101        | 428         | 96.46%      | 28.27×    |
 
-### 🔢 Unique Integer Lists
+## 🔢 Unique Integer Lists
 
 | Pattern               | Original Size | Shrink Size | Space Saved | Factor  |
 | --------------------- | ------------- | ----------- | ----------- | ------- |
@@ -213,7 +215,7 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 | Chunked-Large (1k)    | 4,000         | 44          | 98.90%      | 90.91×  |
 | Huge Sequential (50k) | 200,000       | 5           | 100.00%     | 40,000× |
 
-### 🧠 Auto-Selected Compression Examples
+## 🧠 Auto-Selected Compression Examples
 
 Shrink automatically selects the best compression strategy based on your data:
 
