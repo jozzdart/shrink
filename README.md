@@ -2,7 +2,6 @@
 
 <p align="center">
         <img src="https://img.shields.io/codefactor/grade/github/jozzzzep/shrink/main?style=flat-square">
-        <img src="https://img.shields.io/github/languages/code-size/jozzzzep/shrink?style=flat-square">
         <img src="https://img.shields.io/github/license/jozzzzep/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/points/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/v/shrink?style=flat-square">
@@ -10,24 +9,22 @@
 
 ### ✂️ **shrink** — _because every byte counts._
 
-**Shrink** is a lightweight, high-performance Dart package for intelligent data compression and decompression.  
+`shrink` is a lightweight, high-performance Dart package for intelligent data compression and decompression.  
 It offers a dead-simple API (`.shrink()` / `.restore()`) that compresses strings, JSON, raw bytes, and unique integer lists — perfect for saving space in **Firebase**, **local storage**, or over **low-bandwidth networks**.
 
-Whether you're building a Flutter app or a server-side Dart service, `shrink` helps you cut storage and sync costs with real-world reductions of **5×–40×**, and in edge cases, up to **1000× smaller**.
+Whether you're building a Flutter app or a server-side Dart service, `shrink` helps you cut storage and sync costs with real-world reductions of **5×–40×**, and in edge cases, even **1000× smaller**.
 
-## 🚀 Features
+## Features
 
-- 🔥 **One-liner compression** with `.shrink()`
-- 💡 Supports `String`, `Uint8List`, `Map<String, dynamic>`, and `List<int>` (unique integers)
-- 🧠 Automatically selects optimal compression strategies
-- ✅ **Lossless restoration** with `.restoreX()` or `Restore.x(...)`
-- 🔌 **Seamless integration** with Firebase, Firestore, and local storage
-- 📊 Can even be 200× smaller size depending on data pattern
+- **One-liner compression** with `.shrink()`
+- Supports `text`, `bytes`, `json`, and `List<int>` (unique integers)
+- Automatically selects optimal compression strategies
+- **Seamless integration** with Firebase, Firestore, and local storage
 
 > Same data. A fraction of the size. Production-ready and fully lossless.
 
 - [Introduction](#-shrink-anything-in-one-line)
-- [What can I shrink?!?](#what-can-i-shrink)
+- [What can I shrink?!](#what-can-i-shrink)
 - [All functions per data](#-extension-api-shrink--restorex)
 - [Benchmarks](#-benchmarks)
 - [How It Works Under the Hood](#-how-it-works-under-the-hood)
@@ -71,32 +68,32 @@ final restored = Restore.json(shrinked);
 
 > Every `shrink` operation is **lossless** — the restored value is identical to the original.
 
----
-
-### What Can I Shrink?!
+# What Can I Shrink?!
 
 > In almost every real-world scenario — from network packets and sensor logs to text content and protocol buffers — **data is not truly random**. Even when it _appears_ non-repetitive at a low level, real data almost always contains some form of structure, patterns, or repetition. This is why in typical use, shrink reduces data size by 5× to 10×. However, in some edge cases — such as highly structured or predictable data — compression can reach 100×, 1,000×, or even 1,000,000× smaller. For example, a 1MB list of sequential IDs can shrink to just a few bytes.
 
-### 🔢 `List<int>` (Unique Integers)
+#### 🔢 `List<int>` (Unique Integers)
 
 - Compression: **4× – 200×**
 - Designed for non-repeating IDs (e.g., inventory item IDs).
 - Uses adaptive compression: automatically selects the most efficient method (delta encoding, run-length, chunked, or bitmask), depending on the data pattern.
 
-### 🧠 `Uint8List` (Raw Bytes)
+#### 🧠 `Uint8List` (Raw Bytes)
 
 - Compression: **3× – 30×**
 - Ideal for binary data or serialized objects.
 
-### ✍️ `String` (Text)
+#### ✍️ `String` (Text)
 
 - Compression: **3× – 30×**
 - Useful for logs, messages, or descriptions.
 
-### 📦 `Map<String, dynamic>` (JSON)
+#### 📦 `Map<String, dynamic>` (JSON)
 
 - Compression: **3× – 30×**
 - Perfect for structured data, especially when storing in Firebase or similar.
+
+---
 
 ### ✅ Extension API (`.shrink()` → `.restoreX()`)
 
@@ -115,6 +112,8 @@ final restored = Restore.json(shrinked);
 | Text (String)     | `Shrink.text(text)`    | `Restore.text(shrinked)`   |
 | JSON (Map)        | `Shrink.json(data)`    | `Restore.json(shrinked)`   |
 | Bytes (Uint8List) | `Shrink.bytes(bytes)`  | `Restore.bytes(shrinked)`  |
+
+---
 
 ### ⬇️ Shrinking in code
 
@@ -177,19 +176,21 @@ That’s why compression can be so effective even on data that doesn’t look ob
 
 Shrink leverages this reality and combines compression strategies to achieve significant reductions for most data types.
 
-#### 📦 Compression Results (Bytes & Text)
+---
+
+## 📦 Compression Results (Bytes & Text)
 
 | Data Pattern       | Input Size (Bytes) | Shrink Size | Space Saved | Factor    |
 | ------------------ | ------------------ | ----------- | ----------- | --------- |
-| Random (1KB)       | 1,000              | 1,011       | `None`      | `No gain` |
+| Random (1KB)       | 1,000              | 1,001       | `None`      | `No gain` |
 | Repetitive (1KB)   | 1,000              | 27          | **97.3%**   | **37.0×** |
 | Alternating Bytes  | 1,000              | 18          | **98.2%**   | **55.6×** |
 | Mostly Zeros       | 1,000              | 73          | **92.7%**   | **13.7×** |
-| Large Random (1MB) | 1,048,576          | 1,048,907   | `None`      | `No gain` |
+| Large Random (1MB) | 1,048,576          | 1,048,577   | `None`      | `No gain` |
 
 > 💡 In Shrink, when compression doesn’t help, it’s intelligently skipped — so there’s no overhead.
 
-### 📄 JSON Shrinking
+## 📄 JSON Shrinking
 
 | Type                  | Original Size | Shrink Size | Space Saved | Factor    |
 | --------------------- | ------------- | ----------- | ----------- | --------- |
@@ -200,7 +201,7 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 | Mixed Content         | 1,632         | 403         | 75.31%      | 4.05×     |
 | Large (12101 chars)   | 12,101        | 428         | 96.46%      | 28.27×    |
 
-### 🔢 Unique Integer Lists
+## 🔢 Unique Integer Lists
 
 | Pattern               | Original Size | Shrink Size | Space Saved | Factor  |
 | --------------------- | ------------- | ----------- | ----------- | ------- |
@@ -211,7 +212,7 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 | Chunked-Large (1k)    | 4,000         | 44          | 98.90%      | 90.91×  |
 | Huge Sequential (50k) | 200,000       | 5           | 100.00%     | 40,000× |
 
-### 🧠 Auto-Selected Compression Examples
+## 🧠 Auto-Selected Compression Examples
 
 Shrink automatically selects the best compression strategy based on your data:
 
