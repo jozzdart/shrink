@@ -183,11 +183,11 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 
 | Data Pattern       | Input Size (Bytes) | Shrink Size | Space Saved | Factor    |
 | ------------------ | ------------------ | ----------- | ----------- | --------- |
-| Random (1KB)       | 1,000              | 1,011       | `None`      | `No gain` |
+| Random (1KB)       | 1,000              | 1,001       | `None`      | `No gain` |
 | Repetitive (1KB)   | 1,000              | 27          | **97.3%**   | **37.0×** |
 | Alternating Bytes  | 1,000              | 18          | **98.2%**   | **55.6×** |
 | Mostly Zeros       | 1,000              | 73          | **92.7%**   | **13.7×** |
-| Large Random (1MB) | 1,048,576          | 1,048,907   | `None`      | `No gain` |
+| Large Random (1MB) | 1,048,576          | 1,048,577   | `None`      | `No gain` |
 
 > 💡 In Shrink, when compression doesn’t help, it’s intelligently skipped — so there’s no overhead.
 
