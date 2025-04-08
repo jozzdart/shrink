@@ -66,7 +66,7 @@ final restored = Restore.json(shrinked);
 
 ### What Can I Shrink?!
 
-> In typical use, shrink reduces data size by 5× to 10×. However, in some edge cases — such as highly structured or predictable data — compression can reach 100×, 1,000×, or even 1,000,000× smaller. For example, a 1MB list of sequential IDs can shrink to just a few bytes.
+> In almost every real-world scenario — from network packets and sensor logs to text content and protocol buffers — **data is not truly random**. Even when it _appears_ non-repetitive at a low level, real data almost always contains some form of structure, patterns, or repetition. This is why in typical use, shrink reduces data size by 5× to 10×. However, in some edge cases — such as highly structured or predictable data — compression can reach 100×, 1,000×, or even 1,000,000× smaller. For example, a 1MB list of sequential IDs can shrink to just a few bytes.
 
 ### 🔢 `List<int>` (Unique Integers)
 
@@ -405,9 +405,6 @@ The `shrink` package is actively maintained and will continue to evolve with new
 - **Encrypted Compression Modes**
 
   - Optional lightweight AES layer over compressed data.
-
-- **Analyzer Tooling**
-  - Provide CLI to inspect shrink efficiency and validate stored data integrity.
 
 ---
 
