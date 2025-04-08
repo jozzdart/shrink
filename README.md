@@ -2,7 +2,6 @@
 
 <p align="center">
         <img src="https://img.shields.io/codefactor/grade/github/jozzzzep/shrink/main?style=flat-square">
-        <img src="https://img.shields.io/github/languages/code-size/jozzzzep/shrink?style=flat-square">
         <img src="https://img.shields.io/github/license/jozzzzep/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/points/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/v/shrink?style=flat-square">
