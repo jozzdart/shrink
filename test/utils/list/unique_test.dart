@@ -6,7 +6,7 @@ import '../list_test_data_generator.dart';
 import '../../logs/logs.dart';
 
 // Set to false to disable logging in tests
-const bool enableLogging = false;
+const bool enableLogging = true;
 
 void main() {
   group('Unique List Compression Tests', () {

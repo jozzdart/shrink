@@ -8,7 +8,8 @@ void main() {
     test('chunked compression works with empty list', () {
       final emptyList = <int>[];
 
-      final encoded = shrinkUniqueManual(emptyList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(emptyList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(emptyList));
@@ -17,7 +18,8 @@ void main() {
     test('chunked compression works with single value', () {
       final singleValue = [42];
 
-      final encoded = shrinkUniqueManual(singleValue, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(singleValue, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(singleValue));
@@ -26,7 +28,8 @@ void main() {
     test('chunked compression works with small sorted list', () {
       final smallList = [1, 5, 10, 15, 20];
 
-      final encoded = shrinkUniqueManual(smallList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(smallList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(smallList));
@@ -36,7 +39,8 @@ void main() {
       final unsortedList = [20, 5, 15, 1, 10];
       final sortedList = [1, 5, 10, 15, 20];
 
-      final encoded = shrinkUniqueManual(unsortedList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(unsortedList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       // Chunked encoding sorts the list
@@ -47,7 +51,8 @@ void main() {
       final listWithDuplicates = [1, 5, 5, 10, 10, 10, 20];
       final uniqueList = [1, 5, 10, 20]; // Duplicates removed and sorted
 
-      final encoded = shrinkUniqueManual(listWithDuplicates, UniqueCompressionMethod.chunked);
+      final encoded = shrinkUniqueManual(
+          listWithDuplicates, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       // Verify that duplicates were removed
@@ -58,7 +63,8 @@ void main() {
       // Create a list with 150 values in the same chunk
       final denseChunkList = List.generate(150, (i) => i + 50);
 
-      final encoded = shrinkUniqueManual(denseChunkList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(denseChunkList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(denseChunkList));
@@ -68,7 +74,8 @@ void main() {
       // Create a list with only a few values in the same chunk
       final sparseChunkList = [50, 75, 100, 125, 150];
 
-      final encoded = shrinkUniqueManual(sparseChunkList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(sparseChunkList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sparseChunkList));
@@ -82,25 +89,30 @@ void main() {
         700, 750, 800 // chunk 2-3
       ];
 
-      final encoded = shrinkUniqueManual(multiChunkList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(multiChunkList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(multiChunkList));
     });
 
     test('chunked compression works with sparse list', () {
-      final sparseList = ListTestDataGenerator.generateSparseList(size: 100, sparsity: 50.0);
+      final sparseList =
+          ListTestDataGenerator.generateSparseList(size: 100, sparsity: 50.0);
 
-      final encoded = shrinkUniqueManual(sparseList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(sparseList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sparseList));
     });
 
     test('chunked compression works with chunked list', () {
-      final chunkedList = ListTestDataGenerator.generateChunkedList(size: 200, chunkSize: 10, gapRatio: 5.0);
+      final chunkedList = ListTestDataGenerator.generateChunkedList(
+          size: 200, chunkSize: 10, gapRatio: 5.0);
 
-      final encoded = shrinkUniqueManual(chunkedList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(chunkedList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(chunkedList));
@@ -110,7 +122,8 @@ void main() {
       // Create a list with very large values spanning many chunks
       final largeValuesList = List.generate(100, (i) => i * 1000 + 10000);
 
-      final encoded = shrinkUniqueManual(largeValuesList, UniqueCompressionMethod.chunked);
+      final encoded =
+          shrinkUniqueManual(largeValuesList, UniqueCompressionMethod.chunked);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(largeValuesList));
@@ -118,18 +131,24 @@ void main() {
 
     test('chunked compression compresses data with multiple test cases', () {
       final testCases = [
-        ListTestDataGenerator.generateSortedUniqueList(size: 1000, maxValue: 10000),
+        ListTestDataGenerator.generateSortedUniqueList(
+            size: 1000, maxValue: 10000),
         ListTestDataGenerator.generateSparseList(size: 2000, sparsity: 10.0),
-        ListTestDataGenerator.generateChunkedList(size: 3000, chunkSize: 50, gapRatio: 2.0),
-        ListTestDataGenerator.generateSortedUniqueList(size: 5000, maxValue: 50000),
-        ListTestDataGenerator.generateSortedUniqueList(size: 10000, maxValue: 100000),
+        ListTestDataGenerator.generateChunkedList(
+            size: 3000, chunkSize: 50, gapRatio: 2.0),
+        ListTestDataGenerator.generateSortedUniqueList(
+            size: 5000, maxValue: 50000),
+        ListTestDataGenerator.generateSortedUniqueList(
+            size: 10000, maxValue: 100000),
       ];
 
       for (final testCase in testCases) {
-        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.chunked);
+        final encoded =
+            shrinkUniqueManual(testCase, UniqueCompressionMethod.chunked);
         final decoded = restoreUnique(encoded);
 
-        expect(decoded, equals(testCase), reason: 'Failed with list of size ${testCase.length}');
+        expect(decoded, equals(testCase),
+            reason: 'Failed with list of size ${testCase.length}');
       }
     });
 
@@ -144,10 +163,12 @@ void main() {
         final testCase = testSeries[i];
         final sparsity = sparsityFactors[i];
 
-        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.chunked);
+        final encoded =
+            shrinkUniqueManual(testCase, UniqueCompressionMethod.chunked);
         final decoded = restoreUnique(encoded);
 
-        expect(decoded, equals(testCase), reason: 'Failed with sparsity factor $sparsity');
+        expect(decoded, equals(testCase),
+            reason: 'Failed with sparsity factor $sparsity');
       }
     });
 
@@ -163,10 +184,12 @@ void main() {
         final testCase = testSeries[i];
         final chunkSize = chunkSizes[i];
 
-        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.chunked);
+        final encoded =
+            shrinkUniqueManual(testCase, UniqueCompressionMethod.chunked);
         final decoded = restoreUnique(encoded);
 
-        expect(decoded, equals(testCase), reason: 'Failed with chunk size $chunkSize');
+        expect(decoded, equals(testCase),
+            reason: 'Failed with chunk size $chunkSize');
       }
     });
   });

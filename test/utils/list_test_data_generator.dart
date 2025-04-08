@@ -53,7 +53,8 @@ class ListTestDataGenerator {
 
     while (result.length < size) {
       // Generate a chunk of consecutive integers
-      final actualChunkSize = max(1, chunkSize + _random.nextInt(5) - 2); // Some variation
+      final actualChunkSize =
+          max(1, chunkSize + _random.nextInt(5) - 2); // Some variation
       for (int i = 0; i < actualChunkSize && result.length < size; i++) {
         result.add(currentValue++);
       }
@@ -138,7 +139,10 @@ class ListTestDataGenerator {
     required int size,
     required List<double> sparsityFactors,
   }) {
-    return sparsityFactors.map((factor) => generateSparseList(size: size, sparsity: factor)).toSet().toList();
+    return sparsityFactors
+        .map((factor) => generateSparseList(size: size, sparsity: factor))
+        .toSet()
+        .toList();
   }
 
   /// Generate increasingly chunked test cases (useful for benchmarking)
@@ -147,6 +151,10 @@ class ListTestDataGenerator {
     required List<int> chunkSizes,
     required double gapRatio,
   }) {
-    return chunkSizes.map((chunkSize) => generateChunkedList(size: size, chunkSize: chunkSize, gapRatio: gapRatio)).toSet().toList();
+    return chunkSizes
+        .map((chunkSize) => generateChunkedList(
+            size: size, chunkSize: chunkSize, gapRatio: gapRatio))
+        .toSet()
+        .toList();
   }
 }

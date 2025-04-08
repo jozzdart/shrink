@@ -40,7 +40,8 @@ Uint8List _encodeBitmask(List<int> ids) {
 /// The input should have a 4-byte prefix indicating the length of the bitmask.
 List<int> _decodeBitmask(Uint8List bytes) {
   // Extract the bit length from the first 4 bytes
-  final bitLength = ByteData.view(bytes.buffer, bytes.offsetInBytes, 4).getUint32(0, Endian.big);
+  final bitLength = ByteData.view(bytes.buffer, bytes.offsetInBytes, 4)
+      .getUint32(0, Endian.big);
 
   // The rest of the bytes are the bitmask
   final bitmask = Uint8List.sublistView(bytes, 4);
@@ -53,7 +54,8 @@ List<int> _decodeBitmask(Uint8List bytes) {
     final int bitPosition = id % 8;
 
     // Check if this ID's bit is set
-    if (byteIndex < bitmask.length && (bitmask[byteIndex] & (1 << bitPosition)) != 0) {
+    if (byteIndex < bitmask.length &&
+        (bitmask[byteIndex] & (1 << bitPosition)) != 0) {
       ids.add(id);
     }
   }

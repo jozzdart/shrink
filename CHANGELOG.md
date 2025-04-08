@@ -2,6 +2,15 @@
 
 All notable changes to the "shrink" package will be documented in this file.
 
+## 1.5.3
+
+### Changed
+
+- Replaced dart:io with archive package for WASM compatibility
+- Made package compatible with all platforms including web and WASM
+- Updated compression algorithm implementation to be platform-agnostic
+- Applied auto formatting to align with the official Dart style guide
+
 ## 1.5.2
 
 ### Added

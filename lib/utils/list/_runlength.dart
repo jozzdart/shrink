@@ -20,7 +20,8 @@ Uint8List _encodeRuns(List<int> ids) {
     int runLength = 1;
     last = uniqueIds[i];
 
-    while (i + runLength < uniqueIds.length && uniqueIds[i + runLength] == uniqueIds[i + runLength - 1] + 1) {
+    while (i + runLength < uniqueIds.length &&
+        uniqueIds[i + runLength] == uniqueIds[i + runLength - 1] + 1) {
       last = uniqueIds[i + runLength];
       runLength++;
     }

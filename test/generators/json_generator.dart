@@ -16,7 +16,8 @@ List<Map<String, dynamic>> generateJsonTestData() {
 }
 
 /// Generate a random JSON object with the specified number of keys
-Map<String, dynamic> randomJson(int keyCount, {int maxDepth = 2, int currentDepth = 0}) {
+Map<String, dynamic> randomJson(int keyCount,
+    {int maxDepth = 2, int currentDepth = 0}) {
   final result = <String, dynamic>{};
 
   for (int i = 0; i < keyCount; i++) {
@@ -35,14 +36,16 @@ Map<String, dynamic> randomJson(int keyCount, {int maxDepth = 2, int currentDept
         break;
       case 3: // List
         if (currentDepth < maxDepth) {
-          result[key] = List.generate(3 + random.nextInt(5), (_) => _randomJsonValue(maxDepth, currentDepth + 1));
+          result[key] = List.generate(3 + random.nextInt(5),
+              (_) => _randomJsonValue(maxDepth, currentDepth + 1));
         } else {
           result[key] = random.nextInt(100);
         }
         break;
       case 4: // Nested object
         if (currentDepth < maxDepth) {
-          result[key] = randomJson(3 + random.nextInt(5), maxDepth: maxDepth, currentDepth: currentDepth + 1);
+          result[key] = randomJson(3 + random.nextInt(5),
+              maxDepth: maxDepth, currentDepth: currentDepth + 1);
         } else {
           result[key] = randomString(10);
         }
@@ -66,13 +69,15 @@ dynamic _randomJsonValue(int maxDepth, int currentDepth) {
       return random.nextBool();
     case 3: // List
       if (currentDepth < maxDepth) {
-        return List.generate(2 + random.nextInt(3), (_) => _randomJsonValue(maxDepth, currentDepth + 1));
+        return List.generate(2 + random.nextInt(3),
+            (_) => _randomJsonValue(maxDepth, currentDepth + 1));
       } else {
         return random.nextInt(100);
       }
     case 4: // Nested object
       if (currentDepth < maxDepth) {
-        return randomJson(2 + random.nextInt(3), maxDepth: maxDepth, currentDepth: currentDepth + 1);
+        return randomJson(2 + random.nextInt(3),
+            maxDepth: maxDepth, currentDepth: currentDepth + 1);
       } else {
         return randomString(5);
       }

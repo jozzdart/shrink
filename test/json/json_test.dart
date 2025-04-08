@@ -133,7 +133,8 @@ void main() {
 
         allResults[dataset] = results;
 
-        expect(restored, equals(testData), reason: 'Failed to restore JSON object');
+        expect(restored, equals(testData),
+            reason: 'Failed to restore JSON object');
       }
 
       // Log the results
@@ -192,10 +193,14 @@ void main() {
         {
           'name': 'Mixed Content',
           'data': {
-            'metadata': {'version': '1.0', 'generated': DateTime.now().toIso8601String()},
+            'metadata': {
+              'version': '1.0',
+              'generated': DateTime.now().toIso8601String()
+            },
             'counts': {'users': 1000, 'items': 5000, 'transactions': 25000},
             'flags': {'isTest': true, 'debug': false, 'maintenance': false},
-            'sampleData': List.generate(50, (i) => {'key': 'value$i', 'count': i})
+            'sampleData':
+                List.generate(50, (i) => {'key': 'value$i', 'count': i})
           }
         },
       ];
@@ -300,7 +305,8 @@ bool mapEquals<K, V>(Map<K, V>? a, Map<K, V>? b) {
         } else if (aItem.runtimeType != bItem.runtimeType) {
           // If types don't match but both are JSON serializable primitive types,
           // convert to string for comparison (handles int/double conversion issues)
-          if ((aItem is num || aItem is String || aItem is bool) && (bItem is num || bItem is String || bItem is bool)) {
+          if ((aItem is num || aItem is String || aItem is bool) &&
+              (bItem is num || bItem is String || bItem is bool)) {
             if (aItem.toString() != bItem.toString()) return false;
           } else {
             return false;
@@ -338,7 +344,8 @@ bool _listEquals(List a, List b) {
       if ((aItem - bItem).abs() > 1e-10) return false;
     } else if (aItem.runtimeType != bItem.runtimeType) {
       // Handle type differences in JSON serializable primitive types
-      if ((aItem is num || aItem is String || aItem is bool) && (bItem is num || bItem is String || bItem is bool)) {
+      if ((aItem is num || aItem is String || aItem is bool) &&
+          (bItem is num || bItem is String || bItem is bool)) {
         if (aItem.toString() != bItem.toString()) return false;
       } else {
         return false;

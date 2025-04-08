@@ -18,12 +18,14 @@ void main() {
         final shrunken = shrinkText(testData);
         final restored = restoreText(shrunken);
 
-        expect(restored, equals(testData), reason: 'Failed to restore text: "$testData"');
+        expect(restored, equals(testData),
+            reason: 'Failed to restore text: "$testData"');
 
         // For non-empty strings, verify compression is happening
         if (testData.isNotEmpty && testData.length > 100) {
           expect(shrunken.length, lessThan(testData.length * 1.5),
-              reason: 'Compression ineffective for: "${testData.substring(0, testData.length > 20 ? 20 : testData.length)}..."');
+              reason:
+                  'Compression ineffective for: "${testData.substring(0, testData.length > 20 ? 20 : testData.length)}..."');
         }
       }
     });
@@ -48,7 +50,8 @@ void main() {
         final shrunken = shrinkText(testData);
         final restored = restoreText(shrunken);
 
-        expect(restored, equals(testData), reason: 'Failed to restore simple Unicode text: "$testData"');
+        expect(restored, equals(testData),
+            reason: 'Failed to restore simple Unicode text: "$testData"');
       }
     });
 
@@ -63,7 +66,8 @@ void main() {
         final shrunken = shrinkText(testData);
         final restored = restoreText(shrunken);
 
-        expect(restored, equals(testData), reason: 'Failed to restore emoji text: "$testData"');
+        expect(restored, equals(testData),
+            reason: 'Failed to restore emoji text: "$testData"');
       }
     });
 

@@ -71,7 +71,8 @@ abstract class Shrink {
   ///   [method]: The specific compression method to use
   ///
   /// Returns a compressed [Uint8List].
-  static Uint8List uniqueManual(List<int> uniqueList, UniqueCompressionMethod method) {
+  static Uint8List uniqueManual(
+      List<int> uniqueList, UniqueCompressionMethod method) {
     return shrinkUniqueManual(uniqueList, method);
   }
 }

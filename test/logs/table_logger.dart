@@ -38,12 +38,16 @@ class TableLogger {
     toReturn.add(header);
 
     // Print separator row with same formatting approach as the rows
-    var separator = dynamicRows ? _printDynamicSeparatorRow(headers, widths) : _printFixedSeparatorRow(widths);
+    var separator = dynamicRows
+        ? _printDynamicSeparatorRow(headers, widths)
+        : _printFixedSeparatorRow(widths);
     toReturn.add(separator);
 
     // Print data rows
     for (final row in rows) {
-      var rowsToAdd = dynamicRows ? _printDynamicRow(row, widths, headers.length) : _printFixedRow(row, widths);
+      var rowsToAdd = dynamicRows
+          ? _printDynamicRow(row, widths, headers.length)
+          : _printFixedRow(row, widths);
       toReturn.add(rowsToAdd);
     }
 
@@ -63,7 +67,9 @@ class TableLogger {
     final headers = columns.map((col) => columnLabels?[col] ?? col).toList();
 
     // Generate rows from results
-    final rows = results.map((result) => columns.map((col) => result[col]).toList()).toList();
+    final rows = results
+        .map((result) => columns.map((col) => result[col]).toList())
+        .toList();
 
     final toReturn = printTable(
       title: title,
@@ -113,7 +119,8 @@ class TableLogger {
   }
 
   /// Calculate appropriate column widths based on data
-  static List<int> _calculateColumnWidths(List<String> headers, List<List<dynamic>> rows) {
+  static List<int> _calculateColumnWidths(
+      List<String> headers, List<List<dynamic>> rows) {
     final widths = List<int>.filled(headers.length, 0);
 
     // Consider header widths
@@ -160,7 +167,8 @@ class TableLogger {
   }
 
   /// Print a separator row that matches the dynamic header row format
-  static String _printDynamicSeparatorRow(List<String> headers, List<int> widths) {
+  static String _printDynamicSeparatorRow(
+      List<String> headers, List<int> widths) {
     final parts = <String>[];
 
     for (int i = 0; i < headers.length; i++) {
@@ -186,7 +194,8 @@ class TableLogger {
   }
 
   /// Print a row with content-based widths (expands for actual content)
-  static String _printDynamicRow(List<dynamic> row, List<int> minWidths, int headerCount) {
+  static String _printDynamicRow(
+      List<dynamic> row, List<int> minWidths, int headerCount) {
     final parts = <String>[];
 
     for (int i = 0; i < row.length; i++) {
@@ -196,7 +205,8 @@ class TableLogger {
 
       // Special handling for emoji to ensure consistent width
       final isEmoji = _containsEmoji(cell);
-      final cellWidth = isEmoji ? minWidth : math.max(cell.length + 2, minWidth);
+      final cellWidth =
+          isEmoji ? minWidth : math.max(cell.length + 2, minWidth);
 
       parts.add('| ${cell.padRight(cellWidth - 2)} ');
     }

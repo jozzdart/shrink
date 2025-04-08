@@ -55,7 +55,8 @@ void main() {
   print('---');
 
   // ========== 4. RAW BYTES ==========
-  final rawBytes = Uint8List.fromList(utf8.encode('Raw byte stream with structure: ☁⚡💾'));
+  final rawBytes =
+      Uint8List.fromList(utf8.encode('Raw byte stream with structure: ☁⚡💾'));
 
   final bytesCompressedExt = rawBytes.shrink();
   final bytesRestoredExt = bytesCompressedExt.restoreBytes();

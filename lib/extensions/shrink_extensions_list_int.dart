@@ -40,5 +40,6 @@ extension ShrinkExtensionsListInt on List<int> {
   ///   [method]: The specific compression method to use
   ///
   /// Returns a [Uint8List] containing the compressed integer list.
-  Uint8List shrinkManual(UniqueCompressionMethod method) => utils.shrinkUniqueManual(this, method);
+  Uint8List shrinkManual(UniqueCompressionMethod method) =>
+      utils.shrinkUniqueManual(this, method);
 }

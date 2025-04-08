@@ -37,7 +37,8 @@ void main() {
     });
 
     test('shrinkBytes and restoreBytes work with sequential bytes', () {
-      final sequentialBytes = Uint8List.fromList(List.generate(100, (i) => i % 256));
+      final sequentialBytes =
+          Uint8List.fromList(List.generate(100, (i) => i % 256));
 
       final shrunken = shrinkBytes(sequentialBytes);
       final restored = restoreBytes(shrunken);
@@ -58,7 +59,8 @@ void main() {
       var logger = LogsGroup.empty();
 
       // Create highly compressible data (repetitive)
-      final repetitiveBytes = Uint8List.fromList(List.generate(1000, (i) => i % 10) // Only 10 unique values repeating
+      final repetitiveBytes = Uint8List.fromList(
+          List.generate(1000, (i) => i % 10) // Only 10 unique values repeating
           );
 
       final shrunken = shrinkBytes(repetitiveBytes);
@@ -163,11 +165,19 @@ void main() {
 
       // Create various test datasets with different compression characteristics
       final testDataSet = [
-        _BytesTestInfo('Sequential', Uint8List.fromList(List.generate(1000, (i) => i % 256))),
-        _BytesTestInfo('Repetitive', Uint8List.fromList(List.generate(1000, (i) => i % 10))),
+        _BytesTestInfo('Sequential',
+            Uint8List.fromList(List.generate(1000, (i) => i % 256))),
+        _BytesTestInfo('Repetitive',
+            Uint8List.fromList(List.generate(1000, (i) => i % 10))),
         _BytesTestInfo('Random', randomBytes(1000)),
-        _BytesTestInfo('Alternating', Uint8List.fromList(List.generate(1000, (i) => i % 2 == 0 ? 0 : 255))),
-        _BytesTestInfo('Mostly-Zeros', Uint8List.fromList(List.generate(1000, (i) => i < 950 ? 0 : i % 256))),
+        _BytesTestInfo(
+            'Alternating',
+            Uint8List.fromList(
+                List.generate(1000, (i) => i % 2 == 0 ? 0 : 255))),
+        _BytesTestInfo(
+            'Mostly-Zeros',
+            Uint8List.fromList(
+                List.generate(1000, (i) => i < 950 ? 0 : i % 256))),
       ];
 
       final datasets = <DatasetInfo>[];
@@ -185,7 +195,9 @@ void main() {
         final restored = restoreBytes(shrunken);
 
         // Verify restoration works correctly
-        expect(restored, equals(testData.data), reason: 'Failed to restore bytes of length ${testData.data.length}');
+        expect(restored, equals(testData.data),
+            reason:
+                'Failed to restore bytes of length ${testData.data.length}');
 
         // Calculate no compression baseline size
         final noShrinkSize = testData.data.length;

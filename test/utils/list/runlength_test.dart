@@ -8,7 +8,8 @@ void main() {
     test('runlength compression works with empty list', () {
       final emptyList = <int>[];
 
-      final encoded = shrinkUniqueManual(emptyList, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(emptyList, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(emptyList));
@@ -17,7 +18,8 @@ void main() {
     test('runlength compression works with single value', () {
       final singleValue = [42];
 
-      final encoded = shrinkUniqueManual(singleValue, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(singleValue, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(singleValue));
@@ -26,7 +28,8 @@ void main() {
     test('runlength compression works with small sorted list', () {
       final smallList = [1, 5, 10, 15, 20];
 
-      final encoded = shrinkUniqueManual(smallList, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(smallList, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(smallList));
@@ -36,7 +39,8 @@ void main() {
       final unsortedList = [20, 5, 15, 1, 10];
       final sortedList = [1, 5, 10, 15, 20];
 
-      final encoded = shrinkUniqueManual(unsortedList, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(unsortedList, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       // Run-length encoding sorts the list
@@ -46,7 +50,8 @@ void main() {
     test('runlength compression works with sequential values', () {
       final sequentialList = List.generate(100, (i) => i);
 
-      final encoded = shrinkUniqueManual(sequentialList, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(sequentialList, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sequentialList));
@@ -60,7 +65,8 @@ void main() {
         30 // Single value
       ];
 
-      final encoded = shrinkUniqueManual(listWithRuns, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(listWithRuns, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(listWithRuns));
@@ -71,7 +77,8 @@ void main() {
       final listWithDuplicates = [1, 3, 3, 5, 7, 7, 10];
       final expectedList = [1, 3, 5, 7, 10]; // Duplicates removed and sorted
 
-      final encoded = shrinkUniqueManual(listWithDuplicates, UniqueCompressionMethod.runLength);
+      final encoded = shrinkUniqueManual(
+          listWithDuplicates, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       // Verify that duplicates were removed
@@ -79,18 +86,22 @@ void main() {
     });
 
     test('runlength compression works with sparse list', () {
-      final sparseList = ListTestDataGenerator.generateSparseList(size: 100, sparsity: 50.0);
+      final sparseList =
+          ListTestDataGenerator.generateSparseList(size: 100, sparsity: 50.0);
 
-      final encoded = shrinkUniqueManual(sparseList, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(sparseList, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(sparseList));
     });
 
     test('runlength compression works with chunked list', () {
-      final chunkedList = ListTestDataGenerator.generateChunkedList(size: 200, chunkSize: 10, gapRatio: 5.0);
+      final chunkedList = ListTestDataGenerator.generateChunkedList(
+          size: 200, chunkSize: 10, gapRatio: 5.0);
 
-      final encoded = shrinkUniqueManual(chunkedList, UniqueCompressionMethod.runLength);
+      final encoded =
+          shrinkUniqueManual(chunkedList, UniqueCompressionMethod.runLength);
       final decoded = restoreUnique(encoded);
 
       expect(decoded, equals(chunkedList));
@@ -98,13 +109,16 @@ void main() {
 
     test('runlength compression works with multiple test cases', () {
       final testCases = [
-        ListTestDataGenerator.generateSortedUniqueList(size: 1000, maxValue: 10000),
+        ListTestDataGenerator.generateSortedUniqueList(
+            size: 1000, maxValue: 10000),
         ListTestDataGenerator.generateSparseList(size: 2000, sparsity: 10.0),
-        ListTestDataGenerator.generateChunkedList(size: 3000, chunkSize: 50, gapRatio: 2.0),
+        ListTestDataGenerator.generateChunkedList(
+            size: 3000, chunkSize: 50, gapRatio: 2.0),
       ];
 
       for (final testCase in testCases) {
-        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.runLength);
+        final encoded =
+            shrinkUniqueManual(testCase, UniqueCompressionMethod.runLength);
         final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase));
@@ -121,7 +135,8 @@ void main() {
       for (int i = 0; i < testSeries.length; i++) {
         final testCase = testSeries[i];
 
-        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.runLength);
+        final encoded =
+            shrinkUniqueManual(testCase, UniqueCompressionMethod.runLength);
         final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase));
@@ -139,7 +154,8 @@ void main() {
       for (int i = 0; i < testSeries.length; i++) {
         final testCase = testSeries[i];
 
-        final encoded = shrinkUniqueManual(testCase, UniqueCompressionMethod.runLength);
+        final encoded =
+            shrinkUniqueManual(testCase, UniqueCompressionMethod.runLength);
         final decoded = restoreUnique(encoded);
 
         expect(decoded, equals(testCase));

@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:typed_data';
+import 'package:archive/archive.dart';
 
 /// Compresses a [Uint8List] using multiple compression algorithms and selects the best result.
 ///
@@ -20,10 +20,13 @@ Uint8List shrinkBytes(Uint8List bytes) {
   // Identity (no compression)
   options.add(MapEntry(_CompressionMethod.identity, bytes));
 
+  final zLibEncoder = ZLibEncoder();
+  final gZipEncoder = GZipEncoder();
+
   // Try zlib levels
   for (int level = 1; level <= 9; level++) {
     try {
-      final encoded = ZLibEncoder(level: level).convert(bytes);
+      final encoded = zLibEncoder.encode(bytes, level: level);
       options.add(MapEntry(_CompressionMethod.zlib1 - 1 + level, encoded));
     } catch (_) {
       // skip failed compression
@@ -33,8 +36,8 @@ Uint8List shrinkBytes(Uint8List bytes) {
   // Try gzip levels
   for (int level = 1; level <= 9; level++) {
     try {
-      final encoded = GZipCodec(level: level).encode(bytes);
-      options.add(MapEntry(_CompressionMethod.gzip1 - 10 + level, encoded));
+      final encoded = gZipEncoder.encode(bytes, level: level);
+      options.add(MapEntry(_CompressionMethod.gzip1 - 10 + level, encoded ?? bytes));
     } catch (_) {
       // skip failed compression
     }
@@ -74,12 +77,15 @@ Uint8List restoreBytes(Uint8List bytes) {
   final method = bytes[0];
   final data = bytes.sublist(1);
 
+  final zLibDecoder = ZLibDecoder();
+  final gZipDecoder = GZipDecoder();
+
   if (method == _CompressionMethod.identity) {
     return data;
   } else if (method >= _CompressionMethod.zlib1 && method <= _CompressionMethod.zlib9) {
-    return Uint8List.fromList(ZLibDecoder().convert(data));
+    return Uint8List.fromList(zLibDecoder.decodeBytes(data));
   } else if (method >= _CompressionMethod.gzip1 && method <= _CompressionMethod.gzip9) {
-    return Uint8List.fromList(GZipCodec().decode(data));
+    return Uint8List.fromList(gZipDecoder.decodeBytes(data));
   }
 
   throw UnsupportedError('Unknown compression method: $method');

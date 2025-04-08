@@ -2,7 +2,8 @@ part of 'generators.dart';
 
 /// Generate a random string of specified length
 String randomString(int length) {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   return String.fromCharCodes(
     Iterable.generate(
       length,

@@ -18,7 +18,14 @@ class DataSizeLogger {
     );
 
     // Convert results to a format suitable for TableLogger
-    final headers = ['Format', 'Original Size', 'Shrunk Size', 'Compression Ratio', 'Space Saved', 'Compression Factor'];
+    final headers = [
+      'Format',
+      'Original Size',
+      'Shrunk Size',
+      'Compression Ratio',
+      'Space Saved',
+      'Compression Factor'
+    ];
 
     final rows = results
         .map((result) => [
@@ -123,7 +130,8 @@ class DataSizeLogger {
   }
 
   /// Creates a metrics result with calculated values
-  static _SizeMetricsResult _createMetricsResult(String format, int originalSize, int shrunkSize) {
+  static _SizeMetricsResult _createMetricsResult(
+      String format, int originalSize, int shrunkSize) {
     final ratio = originalSize > 0 ? shrunkSize / originalSize : 0.0;
     final compressionRatio = '${(ratio * 100).toStringAsFixed(2)}%';
     final spaceSaved = '${((1 - ratio) * 100).toStringAsFixed(2)}%';
