@@ -77,23 +77,23 @@ final restored = Restore.json(shrinked);
 
 > In almost every real-world scenario — from network packets and sensor logs to text content and protocol buffers — **data is not truly random**. Even when it _appears_ non-repetitive at a low level, real data almost always contains some form of structure, patterns, or repetition. This is why in typical use, shrink reduces data size by 5× to 10×. However, in some edge cases — such as highly structured or predictable data — compression can reach 100×, 1,000×, or even 1,000,000× smaller. For example, a 1MB list of sequential IDs can shrink to just a few bytes.
 
-### 🔢 `List<int>` (Unique Integers)
+### `List<int>` (Unique Integers)
 
 - Compression: **4× – 200×**
 - Designed for non-repeating IDs (e.g., inventory item IDs).
 - Uses adaptive compression: automatically selects the most efficient method (delta encoding, run-length, chunked, or bitmask), depending on the data pattern.
 
-### 🧠 `Uint8List` (Raw Bytes)
+### `Uint8List` (Raw Bytes)
 
 - Compression: **3× – 30×**
 - Ideal for binary data or serialized objects.
 
-### ✍️ `String` (Text)
+### `String` (Text)
 
 - Compression: **3× – 30×**
 - Useful for logs, messages, or descriptions.
 
-### 📦 `Map<String, dynamic>` (JSON)
+### `Map<String, dynamic>` (JSON)
 
 - Compression: **3× – 30×**
 - Perfect for structured data, especially when storing in Firebase or similar.
