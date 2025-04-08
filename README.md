@@ -13,16 +13,14 @@
 **Shrink** is a lightweight, high-performance Dart package for intelligent data compression and decompression.  
 It offers a dead-simple API (`.shrink()` / `.restore()`) that compresses strings, JSON, raw bytes, and unique integer lists — perfect for saving space in **Firebase**, **local storage**, or over **low-bandwidth networks**.
 
-Whether you're building a Flutter app or a server-side Dart service, `shrink` helps you cut storage and sync costs with real-world reductions of **5×–40×**, and in edge cases, up to **1000× smaller**.
+Whether you're building a Flutter app or a server-side Dart service, `shrink` helps you cut storage and sync costs with real-world reductions of **5×–40×**, and in edge cases, even **1000× smaller**.
 
 ## Features
 
-- **One-liner compression** with `.shrink()`
+- **One-liner compression** with `shrink()`, **lossless restoration** with `restore()`
 - Supports `String`, `Uint8List`, `Map<String, dynamic>`, and `List<int>` (unique integers)
 - Automatically selects optimal compression strategies
-- **Lossless restoration** with `.restoreX()` or `Restore.x(...)`
 - **Seamless integration** with Firebase, Firestore, and local storage
-- Can even be 200× smaller size depending on data pattern
 
 > Same data. A fraction of the size. Production-ready and fully lossless.
 
