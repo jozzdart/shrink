@@ -1,4 +1,4 @@
-library logs;
+library;
 
 export 'logs_group.dart';
 export 'table_logger.dart';
