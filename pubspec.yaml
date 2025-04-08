@@ -1,6 +1,6 @@
 name: shrink
 description: "Efficient data compression made easy. Reduces data footprint by 5-20x, optimized for Firebase, JSON, and structured data"
-version: 1.4.2
+version: 1.5.1
 repository: https://github.com/jozzzzep/shrink
 issue_tracker: https://github.com/jozzzzep/shrink/issues
 homepage: https://github.com/jozzzzep/shrink
@@ -16,13 +16,9 @@ topics:
 environment:
   sdk: ">=2.19.0 <4.0.0"
 
-dependencies:
-  archive: ^3.4.10
-  more: ^4.5.0
-
 dev_dependencies:
   test: ^1.21.0
-  lints: ^2.0.0
+  lints: ^2.1.1
 
 # This section identifies the platforms the package supports
 platforms:

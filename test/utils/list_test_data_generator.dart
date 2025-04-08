@@ -63,7 +63,7 @@ class ListTestDataGenerator {
       currentValue += max(1, _random.nextInt(gapSize * 2));
     }
 
-    return result;
+    return result.toSet().toList();
   }
 
   /// Generate test cases with different list sizes
@@ -130,7 +130,7 @@ class ListTestDataGenerator {
       }
     }
 
-    return result;
+    return result.toSet().toList();
   }
 
   /// Generate increasingly sparse test cases (useful for benchmarking)
@@ -138,7 +138,7 @@ class ListTestDataGenerator {
     required int size,
     required List<double> sparsityFactors,
   }) {
-    return sparsityFactors.map((factor) => generateSparseList(size: size, sparsity: factor)).toList();
+    return sparsityFactors.map((factor) => generateSparseList(size: size, sparsity: factor)).toSet().toList();
   }
 
   /// Generate increasingly chunked test cases (useful for benchmarking)
@@ -147,6 +147,6 @@ class ListTestDataGenerator {
     required List<int> chunkSizes,
     required double gapRatio,
   }) {
-    return chunkSizes.map((chunkSize) => generateChunkedList(size: size, chunkSize: chunkSize, gapRatio: gapRatio)).toList();
+    return chunkSizes.map((chunkSize) => generateChunkedList(size: size, chunkSize: chunkSize, gapRatio: gapRatio)).toSet().toList();
   }
 }

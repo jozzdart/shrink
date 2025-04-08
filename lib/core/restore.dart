@@ -5,7 +5,7 @@ import 'package:shrink/utils/utils.dart';
 /// A utility class for decompressing data that was compressed using the [Shrink] class.
 ///
 /// This class provides static methods to decompress various data types:
-/// - bytes: Decompresses raw binary data compressed with zlib
+/// - bytes: Decompresses raw binary data using the optimal compression method (identity, ZLIB, or GZIP)
 /// - json: Decompresses and parses JSON objects
 /// - text: Decompresses strings encoded with UTF-8 and compressed with zlib
 /// - unique: Decompresses lists of unique integers
@@ -21,7 +21,16 @@ import 'package:shrink/utils/utils.dart';
 abstract class Restore {
   /// Decompresses a [Uint8List] that was compressed using [Shrink.bytes].
   ///
+  /// This function reads the compression method from the first byte and applies
+  /// the appropriate decompression algorithm:
+  /// - Identity (no compression)
+  /// - ZLIB decompression for ZLIB-compressed data
+  /// - GZIP decompression for GZIP-compressed data
+  ///
   /// Returns the original uncompressed [Uint8List].
+  /// Throws [ArgumentError] if the input is empty.
+  /// Throws [UnsupportedError] if the compression method is unknown.
+  /// May throw [FormatException] if the compressed data is corrupted.
   static Uint8List bytes(Uint8List compressed) {
     return restoreBytes(compressed);
   }

@@ -2,7 +2,16 @@
 
 All notable changes to the "shrink" package will be documented in this file.
 
-## 1.4.2
+## 1.5.2
+
+### Added
+
+- Added example.dart file with complete code samples for better pub.dev experience
+- Added Firebase integration guide to README with:
+  - Instructions for compressing data before storage
+  - Best practices for working with compressed data in Firebase
+
+## 1.5.1
 
 ### Added
 
@@ -16,6 +25,33 @@ All notable changes to the "shrink" package will be documented in this file.
   - Binary data compression (Uint8List)
   - JSON object compression (Map<String, dynamic>)
   - Unique integer list compression (List<int>)
+
+## 1.5.0
+
+### Added
+
+- Improved bytes compression with multiple algorithms:
+  - No compression (identity) for cases where compression increases size
+  - ZLIB compression with levels 1-9
+  - GZIP compression with levels 1-9
+  - Automatic selection of best compression method
+  - Lossless compression with full data restoration
+- Enhanced JSON and text compression leveraging the improved bytes compression
+- New detailed benchmarks for pub.dev release
+
+### Removed
+
+- Dependencies on external compression packages:
+  - Removed 'archive' package dependency
+  - Removed 'gzip' package dependency
+  - Removed 'brotli' package dependency
+  - Package is now pure Dart with no external dependencies
+  - All compression algorithms implemented natively
+
+## 1.4.2
+
+### Added
+
 - Performance insights:
   - Compression speed benchmarks across data sizes
   - Memory usage analysis during compression

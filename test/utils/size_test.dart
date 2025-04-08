@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:shrink/utils/size.dart';
 
-import 'test_data_generator.dart';
+import '../generators/generators.dart';
 
 void main() {
   group('Size Utils Tests', () {
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('getStringSize with random test data', () {
-      final testDataSet = TestDataGenerator.generateTextTestData();
+      final testDataSet = generateTextTestData();
 
       for (final testData in testDataSet) {
         final expectedSize = utf8.encode(testData).length;

@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:shrink/utils/text.dart';
 
-import 'test_data_generator.dart';
+import '../generators/generators.dart';
 
 void main() {
   group('Text Utils Tests', () {
@@ -11,7 +11,7 @@ void main() {
         'a', // Single character
         'hello world', // Simple ASCII
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', // Medium length
-        TestDataGenerator.randomString(1000), // Long ASCII string
+        randomString(1000), // Long ASCII string
       ];
 
       for (final testData in asciiTests) {
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('shrinkText and restoreText with long text', () {
-      final longText = TestDataGenerator.randomString(10000);
+      final longText = randomString(10000);
 
       final shrunken = shrinkText(longText);
       final restored = restoreText(shrunken);
