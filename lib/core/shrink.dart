@@ -35,7 +35,7 @@ abstract class Shrink {
     return shrinkBytes(bytes);
   }
 
-  /// Compresses a JSON object (Map<String, dynamic>) using efficient encoding.
+  /// Compresses a JSON object using efficient encoding.
   ///
   /// Returns a compressed [Uint8List].
   static Uint8List json(Map<String, dynamic> json) {
