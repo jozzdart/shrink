@@ -25,7 +25,7 @@ Whether you're building a Flutter app or a server-side Dart service, `shrink` he
 > Same data. A fraction of the size. Production-ready and fully lossless.
 
 - [Introduction](#-shrink-anything-in-one-line)
-- [What can I shrink?!?](#what-can-i-shrink)
+- [What can I shrink?!](#what-can-i-shrink)
 - [All functions per data](#-extension-api-shrink--restorex)
 - [Benchmarks](#-benchmarks)
 - [How It Works Under the Hood](#-how-it-works-under-the-hood)
