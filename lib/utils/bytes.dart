@@ -37,7 +37,7 @@ Uint8List shrinkBytes(Uint8List bytes) {
   for (int level = 1; level <= 9; level++) {
     try {
       final encoded = gZipEncoder.encode(bytes, level: level);
-      options.add(MapEntry(_CompressionMethod.gzip1 - 10 + level, encoded ?? bytes));
+      options.add(MapEntry(_CompressionMethod.gzip1 - 10 + level, encoded));
     } catch (_) {
       // skip failed compression
     }
@@ -82,9 +82,11 @@ Uint8List restoreBytes(Uint8List bytes) {
 
   if (method == _CompressionMethod.identity) {
     return data;
-  } else if (method >= _CompressionMethod.zlib1 && method <= _CompressionMethod.zlib9) {
+  } else if (method >= _CompressionMethod.zlib1 &&
+      method <= _CompressionMethod.zlib9) {
     return Uint8List.fromList(zLibDecoder.decodeBytes(data));
-  } else if (method >= _CompressionMethod.gzip1 && method <= _CompressionMethod.gzip9) {
+  } else if (method >= _CompressionMethod.gzip1 &&
+      method <= _CompressionMethod.gzip9) {
     return Uint8List.fromList(gZipDecoder.decodeBytes(data));
   }
 

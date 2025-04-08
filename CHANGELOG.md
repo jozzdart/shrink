@@ -2,6 +2,13 @@
 
 All notable changes to the "shrink" package will be documented in this file.
 
+## 1.5.4
+
+### Changed
+
+- Updated dependencies of archive package
+- Fixed formatting issues in new implementations
+
 ## 1.5.3
 
 ### Changed

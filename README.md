@@ -1,4 +1,4 @@
-![img](https://i.imgur.com/XuVNF6j.png)
+![img](https://i.imgur.com/NQagMNz.png)
 
 <p align="center">
         <img src="https://img.shields.io/codefactor/grade/github/jozzzzep/shrink/main?style=flat-square">
@@ -7,19 +7,12 @@
         <img src="https://img.shields.io/pub/v/shrink?style=flat-square">
 </p>
 
-### ✂️ **shrink** — _because every byte counts._
+### ✂️ _because every byte counts._
 
 `shrink` is a lightweight, high-performance Dart package for intelligent data compression and decompression.  
 It offers a dead-simple API (`.shrink()` / `.restore()`) that compresses strings, JSON, raw bytes, and unique integer lists — perfect for saving space in **Firebase**, **local storage**, or over **low-bandwidth networks**.
 
 Whether you're building a Flutter app or a server-side Dart service, `shrink` helps you cut storage and sync costs with real-world reductions of **5×–40×**, and in edge cases, even **1000× smaller**.
-
-## Features
-
-- **One-liner compression** with `.shrink()`
-- Supports `text`, `bytes`, `json`, and `List<int>` (unique integers)
-- Automatically selects optimal compression strategies
-- **Seamless integration** with Firebase, Firestore, and local storage
 
 > Same data. A fraction of the size. Production-ready and fully lossless.
 
@@ -97,12 +90,12 @@ final restored = Restore.json(compressed);
 
 ### ✅ Extension API (`.shrink()` → `.restoreX()`)
 
-| Data Type         | Shrink           | Restore                    |
-| ----------------- | ---------------- | -------------------------- |
-| Unique Integers   | `items.shrink()` | `shrinked.restoreUnique()` |
-| Text (String)     | `text.shrink()`  | `shrinked.restoreText()`   |
-| JSON (Map)        | `data.shrink()`  | `shrinked.restoreJson()`   |
-| Bytes (Uint8List) | `bytes.shrink()` | `shrinked.restoreBytes()`  |
+| Data Type         | Shrink                | Restore                    |
+| ----------------- | --------------------- | -------------------------- |
+| Unique Integers   | `items.shrink()`      | `shrinked.restoreUnique()` |
+| Text (String)     | `text.shrink()`       | `shrinked.restoreText()`   |
+| JSON (Map)        | `data.shrink()`       | `shrinked.restoreJson()`   |
+| Bytes (Uint8List) | `bytes.shrinkBytes()` | `shrinked.restoreBytes()`  |
 
 ### 🧱 Static API (`Shrink.x()` → `Restore.x()`)
 
