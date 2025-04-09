@@ -2,6 +2,13 @@
 
 All notable changes to the "shrink" package will be documented in this file.
 
+## 1.5.5
+
+### Added
+
+- Added direct `.shrink()` extension method on Uint8List for more convenient compression, isntead of `.shrinkBytes()`
+- Enhanced README documentation
+
 ## 1.5.4
 
 ### Changed
