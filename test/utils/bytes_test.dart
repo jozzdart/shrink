@@ -596,6 +596,211 @@ void main() {
         logger.printAll();
       }
     });
+
+    test('Performance comparison across all compression methods', () {
+      var logger = LogsGroup.empty();
+
+      // Test data types with different compression characteristics
+      final testDataTypes = [
+        _BytesTestInfo('Repetitive',
+            Uint8List.fromList(List.generate(1000000, (i) => i % 10))),
+        _BytesTestInfo('Semi-random',
+            Uint8List.fromList(List.generate(1000000, (i) => (i * 17) % 251))),
+        _BytesTestInfo('Random', randomBytes(1000000)),
+        _BytesTestInfo(
+            'Text',
+            Uint8List.fromList(List.generate(
+                    1000,
+                    (i) =>
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ')
+                .join()
+                .codeUnits)),
+      ];
+
+      logger.addLogs(['# Compression Performance Benchmark']);
+      logger.addLogs([
+        'Testing each compression method with various data types (1MB each)'
+      ]);
+      logger.addLogs(['']);
+      logger.addLogs([
+        '| Data Type | Method | Method Byte | Compression Speed (MB/s) | Decompression Speed (MB/s) | Ratio | Size (bytes) |'
+      ]);
+      logger.addLogs([
+        '|-----------|--------|-------------|-------------------------|---------------------------|-------|--------------|'
+      ]);
+
+      final zLibEncoder = ZLibEncoder();
+      final gZipEncoder = GZipEncoder();
+
+      for (final dataType in testDataTypes) {
+        final originalSize = dataType.data.length;
+        final originalSizeMB = originalSize / (1024 * 1024);
+
+        // Test identity (no compression)
+        final identityStopwatch = Stopwatch()..start();
+        final identityCompressed = Uint8List(dataType.data.length + 1);
+        identityCompressed[0] = 0; // Identity method byte
+        identityCompressed.setRange(
+            1, identityCompressed.length, dataType.data);
+        final identityCompressionTime =
+            identityStopwatch.elapsedMicroseconds / 1000000;
+
+        identityStopwatch.reset();
+        identityStopwatch.start();
+        final identityRestored = restoreBytes(identityCompressed);
+        final identityDecompressionTime =
+            identityStopwatch.elapsedMicroseconds / 1000000;
+        identityStopwatch.stop();
+
+        final identityCompressionSpeed =
+            originalSizeMB / identityCompressionTime;
+        final identityDecompressionSpeed =
+            originalSizeMB / identityDecompressionTime;
+        final identityRatio = 1.0;
+
+        logger.addLogs([
+          '| ${dataType.name} | Identity | 0 | ${identityCompressionSpeed.toStringAsFixed(2)} | ${identityDecompressionSpeed.toStringAsFixed(2)} | ${identityRatio.toStringAsFixed(2)}x | ${identityCompressed.length} |'
+        ]);
+
+        expect(listEquals(identityRestored, dataType.data), isTrue);
+
+        // Test all ZLIB levels
+        for (int level = 1; level <= 9; level++) {
+          final methodByte = 19 + (level - 1); // ZLIB method bytes: 19-27
+
+          // Measure compression time
+          final compressionStopwatch = Stopwatch()..start();
+          final zlibCompressed =
+              zLibEncoder.encode(dataType.data, level: level);
+          final compressionTime =
+              compressionStopwatch.elapsedMicroseconds / 1000000;
+          compressionStopwatch.stop();
+
+          // Create compressed data with method byte
+          final compressed = Uint8List(zlibCompressed.length + 1);
+          compressed[0] = methodByte;
+          compressed.setRange(1, compressed.length, zlibCompressed);
+
+          // Measure decompression time
+          final decompressionStopwatch = Stopwatch()..start();
+          final restored = restoreBytes(compressed);
+          final decompressionTime =
+              decompressionStopwatch.elapsedMicroseconds / 1000000;
+          decompressionStopwatch.stop();
+
+          // Calculate metrics
+          final compressionSpeed = originalSizeMB / compressionTime;
+          final decompressionSpeed = originalSizeMB / decompressionTime;
+          final compressionRatio = originalSize / compressed.length;
+
+          logger.addLogs([
+            '| ${dataType.name} | ZLIB (level $level) | $methodByte | ${compressionSpeed.toStringAsFixed(2)} | ${decompressionSpeed.toStringAsFixed(2)} | ${compressionRatio.toStringAsFixed(2)}x | ${compressed.length} |'
+          ]);
+
+          expect(listEquals(restored, dataType.data), isTrue);
+        }
+
+        // Test all GZIP levels
+        for (int level = 1; level <= 9; level++) {
+          final methodByte = 28 + (level - 1); // GZIP method bytes: 28-36
+
+          // Measure compression time
+          final compressionStopwatch = Stopwatch()..start();
+          final gzipCompressed =
+              gZipEncoder.encode(dataType.data, level: level);
+          final compressionTime =
+              compressionStopwatch.elapsedMicroseconds / 1000000;
+          compressionStopwatch.stop();
+
+          // Create compressed data with method byte
+          final compressed = Uint8List(gzipCompressed.length + 1);
+          compressed[0] = methodByte;
+          compressed.setRange(1, compressed.length, gzipCompressed);
+
+          // Measure decompression time
+          final decompressionStopwatch = Stopwatch()..start();
+          final restored = restoreBytes(compressed);
+          final decompressionTime =
+              decompressionStopwatch.elapsedMicroseconds / 1000000;
+          decompressionStopwatch.stop();
+
+          // Calculate metrics
+          final compressionSpeed = originalSizeMB / compressionTime;
+          final decompressionSpeed = originalSizeMB / decompressionTime;
+          final compressionRatio = originalSize / compressed.length;
+
+          logger.addLogs([
+            '| ${dataType.name} | GZIP (level $level) | $methodByte | ${compressionSpeed.toStringAsFixed(2)} | ${decompressionSpeed.toStringAsFixed(2)} | ${compressionRatio.toStringAsFixed(2)}x | ${compressed.length} |'
+          ]);
+
+          expect(listEquals(restored, dataType.data), isTrue);
+        }
+
+        // Finally, test shrinkBytes (which should select the optimal method)
+        final shrinkStopwatch = Stopwatch()..start();
+        final shrunken = shrinkBytes(dataType.data);
+        final shrinkTime = shrinkStopwatch.elapsedMicroseconds / 1000000;
+        shrinkStopwatch.stop();
+
+        final selectedMethod = shrunken[0];
+        String methodName;
+        if (selectedMethod == 0) {
+          methodName = 'Identity';
+        } else if (selectedMethod >= 19 && selectedMethod <= 27) {
+          methodName = 'ZLIB (level ${selectedMethod - 18})';
+        } else if (selectedMethod >= 28 && selectedMethod <= 36) {
+          methodName = 'GZIP (level ${selectedMethod - 27})';
+        } else {
+          methodName = 'Unknown';
+        }
+
+        // Measure decompression time
+        final restoreStopwatch = Stopwatch()..start();
+        final restored = restoreBytes(shrunken);
+        final restoreTime = restoreStopwatch.elapsedMicroseconds / 1000000;
+        restoreStopwatch.stop();
+
+        // Calculate metrics
+        final shrinkSpeed = originalSizeMB / shrinkTime;
+        final restoreSpeed = originalSizeMB / restoreTime;
+        final shrinkRatio = originalSize / shrunken.length;
+
+        logger.addLogs([
+          '| ${dataType.name} | Selected: $methodName | $selectedMethod | ${shrinkSpeed.toStringAsFixed(2)} | ${restoreSpeed.toStringAsFixed(2)} | ${shrinkRatio.toStringAsFixed(2)}x | ${shrunken.length} |'
+        ]);
+
+        logger.addLogs([
+          '|-----------|--------|-------------|-------------------------|---------------------------|-------|--------------|'
+        ]);
+
+        expect(listEquals(restored, dataType.data), isTrue);
+      }
+
+      // Summary section
+      logger.addLogs(['']);
+      logger.addLogs(['## Performance Summary:']);
+      logger.addLogs(['']);
+      logger.addLogs([
+        '- The test compares compression speed, decompression speed, and compression ratio'
+      ]);
+      logger.addLogs([
+        '- Higher compression levels generally offer better compression ratios but slower compression speeds'
+      ]);
+      logger
+          .addLogs(['- The optimal method depends on the specific use case:']);
+      logger.addLogs([
+        '  * For speed-critical applications: Lower compression levels or Identity'
+      ]);
+      logger.addLogs(
+          ['  * For storage/bandwidth-critical: Higher compression levels']);
+      logger.addLogs([
+        '  * The shrinkBytes function automatically selects the best method based on size'
+      ]);
+
+      if (enableLogging) {
+        logger.printAll();
+      }
+    });
   });
 }
 
