@@ -1,5 +1,6 @@
-![img](https://i.imgur.com/NQagMNz.png)
+![img](https://i.imgur.com/96jsfqo.png)
 
+<h3 align="center"><i>Because every byte counts.</i></h3>
 <p align="center">
         <img src="https://img.shields.io/codefactor/grade/github/jozzzzep/shrink/main?style=flat-square">
         <img src="https://img.shields.io/github/license/jozzzzep/shrink?style=flat-square">
@@ -7,14 +8,7 @@
         <img src="https://img.shields.io/pub/v/shrink?style=flat-square">
 </p>
 
-### ✂️ _because every byte counts._
-
-`shrink` is a lightweight, high-performance Dart package for intelligent data compression and decompression.  
-It offers a dead-simple API (`.shrink()` / `.restore()`) that compresses strings, JSON, raw bytes, and unique integer lists — perfect for saving space in **Firebase**, **local storage**, or over **low-bandwidth networks**.
-
-Whether you're building a Flutter app or a server-side Dart service, `shrink` helps you cut storage and sync costs with real-world reductions of **5×–40×**, and in edge cases, even **1000× smaller**.
-
-> Same data. A fraction of the size. Production-ready and fully lossless.
+Compress any data in one line — no setup, no boilerplate, and nothing to configure. It automatically detects if compression is beneficial, chooses the most efficient method, and keeps everything fully lossless. Typical savings range from 5× to 40×, and can reach 1,000× or more with structured data. Ideal for reducing size in Firebase, speeding up local storage, and optimizing for low-bandwidth environments.
 
 - [Introduction](#-shrink-anything-in-one-line)
 - [What can I shrink?!](#what-can-i-shrink)
@@ -63,39 +57,38 @@ final restored = Restore.json(compressed);
 
 # What Can I Shrink?!
 
-> In almost every real-world scenario — from network packets and sensor logs to text content and protocol buffers — **data is not truly random**. Even when it _appears_ non-repetitive at a low level, real data almost always contains some form of structure, patterns, or repetition. This is why in typical use, shrink reduces data size by 5× to 10×. However, in some edge cases — such as highly structured or predictable data — compression can reach 100×, 1,000×, or even 1,000,000× smaller. For example, a 1MB list of sequential IDs can shrink to just a few bytes.
+> Real-world data — from network packets to text content — is rarely random. It contains patterns and structure that enable efficient compression. In typical use, shrink reduces data size by 5× to 10×. With highly structured data, compression can reach 100× or even 1,000× smaller. For example, a 1MB list of sequential IDs can shrink to just a few bytes.
 
 #### 🔢 `List<int>` (Unique Integers)
 
-- Compression: **4× – 200×**
-- Designed for non-repeating IDs (e.g., inventory item IDs).
-- Uses adaptive compression: automatically selects the most efficient method (delta encoding, run-length, chunked, or bitmask), depending on the data pattern.
+- Perfect for ID lists like inventory items, selected flags, indexes, or any sparse/sequential keys. Optimized for sets of non-repeating integers.
 
 #### 🧠 `Uint8List` (Raw Bytes)
 
-- Compression: **3× – 30×**
-- Ideal for binary data or serialized objects.
+- Great for custom compression workflows — convert anything to bytes and shrink it efficiently. Ideal for binary data or serialized formats.
 
 #### ✍️ `String` (Text)
 
-- Compression: **3× – 30×**
-- Useful for logs, messages, or descriptions.
+- Compress plain text directly and restore it back as a String. Works well for logs, messages, descriptions, or long content fields.
 
 #### 📦 `Map<String, dynamic>` (JSON)
 
-- Compression: **3× – 30×**
-- Perfect for structured data, especially when storing in Firebase or similar.
+- Shrinks any Map<String, dynamic> by compressing the serialized string. Especially useful for structured or repetitive data — great for Firebase, config files, and API payloads.
 
 ---
 
+- Shrink any supported data using the extension or static API.
+- Don’t shrink twice — it just adds a byte.
+- Use the correct restore method for the data type.
+
 ### ✅ Extension API (`.shrink()` → `.restoreX()`)
 
-| Data Type         | Shrink                | Restore                    |
-| ----------------- | --------------------- | -------------------------- |
-| Unique Integers   | `items.shrink()`      | `shrinked.restoreUnique()` |
-| Text (String)     | `text.shrink()`       | `shrinked.restoreText()`   |
-| JSON (Map)        | `data.shrink()`       | `shrinked.restoreJson()`   |
-| Bytes (Uint8List) | `bytes.shrinkBytes()` | `shrinked.restoreBytes()`  |
+| Data Type         | Shrink           | Restore                    |
+| ----------------- | ---------------- | -------------------------- |
+| Unique Integers   | `items.shrink()` | `shrinked.restoreUnique()` |
+| Text (String)     | `text.shrink()`  | `shrinked.restoreText()`   |
+| JSON (Map)        | `data.shrink()`  | `shrinked.restoreJson()`   |
+| Bytes (Uint8List) | `bytes.shrink()` | `shrinked.restoreBytes()`  |
 
 ### 🧱 Static API (`Shrink.x()` → `Restore.x()`)
 
@@ -111,10 +104,10 @@ final restored = Restore.json(compressed);
 ### ⬇️ Shrinking in code
 
 ```dart
-final shrinkedItems = items.shrink();         //   4 KB
-final shrinkedText  = text.shrink();          //   8 KB
-final shrinkedJson  = data.shrink();          //  12 KB
-final shrinkedBytes = data.shrinkBytes()      // -------- For shrinking any data
+final shrinkedItems = items.shrink();
+final shrinkedText  = text.shrink();
+final shrinkedJson  = data.shrink();
+final shrinkedBytes = data.shrink()
 ```
 
 Or use the static `Shrink` class for a clean, explicit API:
@@ -196,14 +189,15 @@ Shrink leverages this reality and combines compression strategies to achieve sig
 
 ## 🔢 Unique Integer Lists
 
-| Pattern               | Original Size | Shrink Size | Space Saved | Factor  |
-| --------------------- | ------------- | ----------- | ----------- | ------- |
-| Sequential (1k)       | 4,000         | 4           | 99.90%      | 1000×   |
-| Sparse-Low (1k)       | 4,000         | 630         | 84.25%      | 6.35×   |
-| Sparse-High (1k)      | 4,000         | 1,083       | 72.92%      | 3.69×   |
-| Chunked-Small (1k)    | 4,000         | 360         | 91.00%      | 11.11×  |
-| Chunked-Large (1k)    | 4,000         | 44          | 98.90%      | 90.91×  |
-| Huge Sequential (50k) | 200,000       | 5           | 100.00%     | 40,000× |
+| Pattern                | Original Size | Shrink Size | Space Saved | Factor   |
+| ---------------------- | ------------- | ----------- | ----------- | -------- |
+| Sequential (1k)        | 4,000         | 4           | 99.90%      | 1000×    |
+| Sparse-Low (1k)        | 4,000         | 630         | 84.25%      | 6.35×    |
+| Sparse-High (1k)       | 4,000         | 1,083       | 72.92%      | 3.69×    |
+| Chunked-Small (1k)     | 4,000         | 360         | 91.00%      | 11.11×   |
+| Chunked-Large (1k)     | 4,000         | 44          | 98.90%      | 90.91×   |
+| Huge Sequential (50k)  | 200,000       | 5           | 100.00%     | 40,000×  |
+| Mega-Sequential (250k) | 1,000,000     | 5           | 100.00%     | 200,000× |
 
 ## 🧠 Auto-Selected Compression Examples
 
