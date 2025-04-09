@@ -2,6 +2,21 @@
 
 All notable changes to the "shrink" package will be documented in this file.
 
+## 1.5.6
+
+### Fixed
+
+- Corrected method byte assignment for GZIP compression.
+  - Previous versions incorrectly assigned method values 1–9 to both ZLIB and GZIP, causing all data to be interpreted as ZLIB during decompression.
+  - This version now uses proper, non-overlapping byte values:
+    - ZLIB: 19–27
+    - GZIP: 28–36
+
+### Added
+
+- Legacy support for previously serialized data.
+  - Compressed data written using versions prior to 1.5.6 (with incorrect method byte values) will still be successfully decompressed using a fallback logic in restoreBytes.
+
 ## 1.5.5
 
 ### Added

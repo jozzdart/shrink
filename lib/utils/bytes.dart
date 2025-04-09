@@ -15,46 +15,43 @@ import 'package:archive/archive.dart';
 /// Returns a compressed [Uint8List] using the most efficient method for the input data.
 /// The compression is lossless - the original data can be fully restored.
 Uint8List shrinkBytes(Uint8List bytes) {
-  final List<MapEntry<int, List<int>>> options = [];
-
-  // Identity (no compression)
-  options.add(MapEntry(_CompressionMethod.identity, bytes));
+  // Start by assuming "no compression" is best (identity).
+  int bestMethod = _CompressionMethod.identity;
+  List<int> bestData = bytes;
 
   final zLibEncoder = ZLibEncoder();
   final gZipEncoder = GZipEncoder();
 
-  // Try zlib levels
+  // Try ZLIB levels
   for (int level = 1; level <= 9; level++) {
     try {
       final encoded = zLibEncoder.encode(bytes, level: level);
-      options.add(MapEntry(_CompressionMethod.zlib1 - 1 + level, encoded));
+      if (encoded.length < bestData.length) {
+        bestMethod = _CompressionMethod.zlib1 + (level - 1);
+        bestData = encoded;
+      }
     } catch (_) {
-      // skip failed compression
+      // Skip if compression fails at this level
     }
   }
 
-  // Try gzip levels
+  // Try GZIP levels
   for (int level = 1; level <= 9; level++) {
     try {
       final encoded = gZipEncoder.encode(bytes, level: level);
-      options.add(MapEntry(_CompressionMethod.gzip1 - 10 + level, encoded));
+      if (encoded.length < bestData.length) {
+        bestMethod = _CompressionMethod.gzip1 + (level - 1);
+        bestData = encoded;
+      }
     } catch (_) {
-      // skip failed compression
+      // Skip if compression fails at this level
     }
   }
 
-  // Find the best result (smallest size)
-  MapEntry<int, List<int>> best = options.first;
-  for (var option in options) {
-    if (option.value.length < best.value.length) {
-      best = option;
-    }
-  }
-
-  // Return best: method byte + compressed bytes
-  final result = Uint8List(best.value.length + 1);
-  result[0] = best.key;
-  result.setRange(1, result.length, best.value);
+  // Build the final [Uint8List]: method byte + compressed bytes
+  final result = Uint8List(bestData.length + 1);
+  result[0] = bestMethod;
+  result.setRange(1, result.length, bestData);
   return result;
 }
 
@@ -72,32 +69,55 @@ Uint8List shrinkBytes(Uint8List bytes) {
 /// Throws [UnsupportedError] if the compression method is unknown.
 /// May throw [FormatException] if the compressed data is corrupted.
 Uint8List restoreBytes(Uint8List bytes) {
-  if (bytes.isEmpty) throw ArgumentError('Input is empty');
+  if (bytes.isEmpty) {
+    throw ArgumentError('Input is empty');
+  }
 
   final method = bytes[0];
   final data = bytes.sublist(1);
 
+  if (method == _CompressionMethod.identity) {
+    return data; // No compression
+  }
+
   final zLibDecoder = ZLibDecoder();
   final gZipDecoder = GZipDecoder();
 
-  if (method == _CompressionMethod.identity) {
-    return data;
-  } else if (method >= _CompressionMethod.zlib1 &&
-      method <= _CompressionMethod.zlib9) {
+  if (_CompressionMethod.isZlib(method)) {
     return Uint8List.fromList(zLibDecoder.decodeBytes(data));
-  } else if (method >= _CompressionMethod.gzip1 &&
-      method <= _CompressionMethod.gzip9) {
+  } else if (_CompressionMethod.isGzip(method)) {
     return Uint8List.fromList(gZipDecoder.decodeBytes(data));
+  } else if (_CompressionMethod.isLegacy(method)) {
+    // Handle old/legacy compression (try zlib, then gzip)
+    try {
+      return Uint8List.fromList(zLibDecoder.decodeBytes(data));
+    } catch (_) {
+      try {
+        return Uint8List.fromList(gZipDecoder.decodeBytes(data));
+      } catch (e) {
+        throw FormatException('Failed to decode LEGACY method=$method: $e');
+      }
+    }
+  } else {
+    throw UnsupportedError('Unknown compression method byte: $method');
   }
-
-  throw UnsupportedError('Unknown compression method: $method');
 }
 
+/// Defines both legacy and current compression method IDs.
+/// Legacy ones are still recognized in [restoreBytes], but are no longer written by [shrinkBytes].
 class _CompressionMethod {
-  static const int identity = 0;
-  static const int zlib1 = 1;
-  static const int zlib9 = 9;
+  // Legacy IDs (for backward compatibility before the 1.5.6 fix)
+  static const int legacyStart = 1;
+  static const int legacyEnd = 9;
 
-  static const int gzip1 = 10;
-  static const int gzip9 = 18;
+  static const int identity = 0;
+  static const int zlib1 = 19;
+  static const int zlib9 = 27;
+  static const int gzip1 = 28;
+  static const int gzip9 = 36;
+
+  static bool isLegacy(int method) =>
+      method >= legacyStart && method <= legacyEnd;
+  static bool isZlib(int method) => method >= zlib1 && method <= zlib9;
+  static bool isGzip(int method) => method >= gzip1 && method <= gzip9;
 }
