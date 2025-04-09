@@ -64,6 +64,9 @@ Uint8List shrinkBytes(Uint8List bytes) {
 /// - ZLIB decompression for ZLIB-compressed data
 /// - GZIP decompression for GZIP-compressed data
 ///
+/// It also supports legacy compression methods from versions prior to 1.5.6,
+/// where method bytes 1-9 were used for both ZLIB and GZIP compression.
+///
 /// Returns the original, uncompressed [Uint8List].
 /// Throws [ArgumentError] if the input is empty.
 /// Throws [UnsupportedError] if the compression method is unknown.
