@@ -14,7 +14,7 @@ extension ShrinkExtensionsListInt on List<int> {
   /// the one that produces the smallest result for the given input. It works best
   /// when the list contains unique integers (no duplicates).
   ///
-  /// For decompression, use [Uint8List.restoreUnique].
+  /// For decompression, use [Uint8List.restoreUnique]. or [Restore.unique].
   ///
   /// Returns a [Uint8List] containing the compressed integer list.
   Uint8List shrink() => utils.shrinkUnique(this);
@@ -34,7 +34,7 @@ extension ShrinkExtensionsListInt on List<int> {
   /// - [UniqueCompressionMethod.chunked]: Good for lists with clustered values
   /// - [UniqueCompressionMethod.bitmask]: Good for dense sets of integers within a limited range
   ///
-  /// For decompression, use [Uint8List.restoreUnique].
+  /// For decompression, use [Uint8List.restoreUnique]. or [Restore.unique].
   ///
   /// Parameters:
   ///   [method]: The specific compression method to use
