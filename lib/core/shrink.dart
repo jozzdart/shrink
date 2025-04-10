@@ -5,7 +5,7 @@ import 'package:shrink/utils/utils.dart';
 /// A utility class for compressing different types of data.
 ///
 /// This class provides static methods to compress various data types:
-/// - bytes: Compresses raw binary data using multiple compression algorithms and selects the best result (identity, ZLIB, or GZIP)
+/// - bytes: Compresses raw binary data using identity or ZLIB compression and selects the best result
 /// - json: Compresses JSON objects efficiently
 /// - text: Compresses strings using UTF-8 encoding and zlib
 /// - unique: Compresses lists of unique integers using specialized algorithms
@@ -19,12 +19,11 @@ import 'package:shrink/utils/utils.dart';
 /// final jsonCompressed = Shrink.json({'name': 'John', 'age': 30});
 /// ```
 abstract class Shrink {
-  /// Compresses a [Uint8List] using multiple compression algorithms and selects the best result.
+  /// Compresses a [Uint8List] using zlib compression or no compression (identity).
   ///
-  /// This function tries different compression methods and levels to find the optimal compression:
+  /// This function tries different compression levels to find the optimal compression:
   /// - No compression (identity) - used when compression would increase size
-  /// - ZLIB compression with levels 1-9
-  /// - GZIP compression with levels 1-9
+  /// - ZLIB compression with levels 4-9
   ///
   /// The first byte of the returned [Uint8List] indicates the compression method used,
   /// followed by the compressed data.

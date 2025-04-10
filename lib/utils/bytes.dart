@@ -1,103 +1,110 @@
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
 
-/// Compresses a [Uint8List] using multiple compression algorithms and selects the best result.
-///
-/// This function tries different compression methods and levels to find the optimal compression:
-///
-/// - No compression (identity) - used when compression would increase size
-/// - ZLIB compression with levels 1-9
-/// - GZIP compression with levels 1-9
-///
-/// The first byte of the returned [Uint8List] indicates the compression method used,
-/// followed by the compressed data.
-///
-/// Returns a compressed [Uint8List] using the most efficient method for the input data.
-/// The compression is lossless - the original data can be fully restored.
+/// Compresses a [Uint8List] using the optimal compression method.
+/// Returns a [Uint8List] with a method byte prefix followed by compressed data.
+/// Compression is lossless and can be reversed with restoreBytes().
 Uint8List shrinkBytes(Uint8List bytes) {
-  final List<MapEntry<int, List<int>>> options = [];
+  // Start by assuming "no compression" is best (identity).
+  int bestMethod = _CompressionMethod.identity;
+  List<int> bestData = bytes;
 
-  // Identity (no compression)
-  options.add(MapEntry(_CompressionMethod.identity, bytes));
-
+  // Start attempt at zlib level 4.
   final zLibEncoder = ZLibEncoder();
-  final gZipEncoder = GZipEncoder();
 
-  // Try zlib levels
-  for (int level = 1; level <= 9; level++) {
-    try {
-      final encoded = zLibEncoder.encode(bytes, level: level);
-      options.add(MapEntry(_CompressionMethod.zlib1 - 1 + level, encoded));
-    } catch (_) {
-      // skip failed compression
+  // Start at zlib level 4.
+  const startLevel = 4;
+  const endLevel = 9;
+
+  try {
+    // First try level 4
+    final level4Result = zLibEncoder.encode(bytes, level: startLevel);
+    if (level4Result.length < bestData.length) {
+      // If level 4 is beneficial, adopt it and set method=10 (zlib)
+      bestMethod = _CompressionMethod.zlib; // We'll always use 10
+      bestData = level4Result;
+
+      // Now try levels 5..9, but still store method=10 if improved
+      for (int level = startLevel + 1; level <= endLevel; level++) {
+        try {
+          final encoded = zLibEncoder.encode(bytes, level: level);
+          if (encoded.length < bestData.length) {
+            // Update only the bestData, keep bestMethod as 10
+            bestData = encoded;
+          } else {
+            // No improvement => stop checking further levels
+            break;
+          }
+        } catch (_) {
+          break; // If something goes wrong, keep current best
+        }
+      }
     }
+    // If level 4 wasn't better, remain identity (0).
+  } catch (_) {
+    // If zlib fails at all, remain identity.
   }
 
-  // Try gzip levels
-  for (int level = 1; level <= 9; level++) {
-    try {
-      final encoded = gZipEncoder.encode(bytes, level: level);
-      options.add(MapEntry(_CompressionMethod.gzip1 - 10 + level, encoded));
-    } catch (_) {
-      // skip failed compression
-    }
-  }
-
-  // Find the best result (smallest size)
-  MapEntry<int, List<int>> best = options.first;
-  for (var option in options) {
-    if (option.value.length < best.value.length) {
-      best = option;
-    }
-  }
-
-  // Return best: method byte + compressed bytes
-  final result = Uint8List(best.value.length + 1);
-  result[0] = best.key;
-  result.setRange(1, result.length, best.value);
+  // Build the final [Uint8List]: method byte + compressed bytes
+  final result = Uint8List(bestData.length + 1);
+  result[0] = bestMethod;
+  result.setRange(1, result.length, bestData);
   return result;
 }
 
 /// Decompresses a [Uint8List] that was compressed by [shrinkBytes].
 ///
-/// This function reads the compression method from the first byte and applies
-/// the appropriate decompression algorithm:
+/// Reads the compression method from the first byte and applies the appropriate
+/// decompression algorithm. Supports legacy compression methods from versions
+/// prior to 1.5.6.
 ///
-/// - Identity (no compression)
-/// - ZLIB decompression for ZLIB-compressed data
-/// - GZIP decompression for GZIP-compressed data
-///
-/// Returns the original, uncompressed [Uint8List].
-/// Throws [ArgumentError] if the input is empty.
-/// Throws [UnsupportedError] if the compression method is unknown.
-/// May throw [FormatException] if the compressed data is corrupted.
+/// Returns the original uncompressed data.
+/// Throws [ArgumentError] if input is empty, [UnsupportedError] for unknown
+/// compression methods, or [FormatException] if data is corrupted.
 Uint8List restoreBytes(Uint8List bytes) {
-  if (bytes.isEmpty) throw ArgumentError('Input is empty');
+  if (bytes.isEmpty) {
+    throw ArgumentError('Input is empty');
+  }
 
   final method = bytes[0];
   final data = bytes.sublist(1);
 
-  final zLibDecoder = ZLibDecoder();
-  final gZipDecoder = GZipDecoder();
-
   if (method == _CompressionMethod.identity) {
-    return data;
-  } else if (method >= _CompressionMethod.zlib1 &&
-      method <= _CompressionMethod.zlib9) {
-    return Uint8List.fromList(zLibDecoder.decodeBytes(data));
-  } else if (method >= _CompressionMethod.gzip1 &&
-      method <= _CompressionMethod.gzip9) {
-    return Uint8List.fromList(gZipDecoder.decodeBytes(data));
+    return data; // No compression
   }
 
-  throw UnsupportedError('Unknown compression method: $method');
+  final zLibDecoder = ZLibDecoder();
+
+  if (method == _CompressionMethod.zlib) {
+    return Uint8List.fromList(zLibDecoder.decodeBytes(data));
+  } else if (_CompressionMethod.isLegacy(method)) {
+    // Legacy 1..9 could be zlib or gzip, try zlib first, then gzip.
+    try {
+      return Uint8List.fromList(zLibDecoder.decodeBytes(data));
+    } catch (_) {
+      final gZipDecoder = GZipDecoder();
+      try {
+        return Uint8List.fromList(gZipDecoder.decodeBytes(data));
+      } catch (e) {
+        throw FormatException('Failed to decode LEGACY method=$method: $e');
+      }
+    }
+  } else {
+    throw UnsupportedError('Unknown compression method byte: $method');
+  }
 }
 
+/// Defines both legacy and current compression method IDs.
+/// Legacy ones are still recognized in [restoreBytes], but are no longer written by [shrinkBytes].
 class _CompressionMethod {
   static const int identity = 0;
-  static const int zlib1 = 1;
-  static const int zlib9 = 9;
 
-  static const int gzip1 = 10;
-  static const int gzip9 = 18;
+  // Legacy range for backward compatibility
+  static const int legacyStart = 1;
+  static const int legacyEnd = 9;
+
+  static const int zlib = 10;
+
+  static bool isLegacy(int method) =>
+      method >= legacyStart && method <= legacyEnd;
 }

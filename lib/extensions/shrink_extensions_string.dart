@@ -11,12 +11,12 @@ extension ShrinkExtensionsString on String {
   /// Compresses this string using UTF-8 encoding and zlib compression.
   ///
   /// This method encodes the string as UTF-8, then applies zlib compression
-  /// to reduce its size. For decompression, use [Uint8List.restoreText].
+  /// to reduce its size. For decompression, use [Uint8List.restoreText] or [Restore.text].
   ///
   /// Returns a [Uint8List] containing the compressed string data.
   Uint8List shrink() => utils.shrinkText(this);
 
-  /// Decodes this base64-encoded string to a [Uint8List].
+  /// Decodes this base64-encoded string to bytes [Uint8List].
   ///
   /// This method is the inverse of [Uint8List.toBase64].
   ///

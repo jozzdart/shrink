@@ -5,7 +5,7 @@ import 'package:shrink/utils/utils.dart';
 /// A utility class for decompressing data that was compressed using the [Shrink] class.
 ///
 /// This class provides static methods to decompress various data types:
-/// - bytes: Decompresses raw binary data using the optimal compression method (identity, ZLIB, or GZIP)
+/// - bytes: Decompresses raw binary data using the optimal compression method (identity or ZLIB)
 /// - json: Decompresses and parses JSON objects
 /// - text: Decompresses strings encoded with UTF-8 and compressed with zlib
 /// - unique: Decompresses lists of unique integers
@@ -25,7 +25,9 @@ abstract class Restore {
   /// the appropriate decompression algorithm:
   /// - Identity (no compression)
   /// - ZLIB decompression for ZLIB-compressed data
-  /// - GZIP decompression for GZIP-compressed data
+  ///
+  /// Note: For backward compatibility, it also supports legacy compression methods
+  /// from versions prior to 1.5.6.
   ///
   /// Returns the original uncompressed [Uint8List].
   /// Throws [ArgumentError] if the input is empty.

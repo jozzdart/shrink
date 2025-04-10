@@ -12,7 +12,8 @@ class TestDataLoader {
   }
 
   /// Loads and parses a JSON file from the `test/data/` folder.
-  static Future<Map<String, dynamic>> getJson(String name) async {
+  /// Returns the decoded JSON content.
+  static Future<dynamic> getJson(String name) async {
     final content = await getFile('$name.json');
     return jsonDecode(content);
   }
