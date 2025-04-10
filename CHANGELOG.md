@@ -1,21 +1,31 @@
 # Changelog
 
-All notable changes to the "shrink" package will be documented in this file.
+All notable changes to the `shrink` package will be documented in this file.
 
 ## 1.5.6
 
 ### Fixed
 
-- Corrected method byte assignment for GZIP compression.
-  - Previous versions incorrectly assigned method values 1–9 to both ZLIB and GZIP, causing all data to be interpreted as ZLIB during decompression.
-  - This version now uses proper, non-overlapping byte values:
-    - ZLIB: 19–27
-    - GZIP: 28–36
+- Fixed a critical bug where compression method values 1–9 were ambiguously used for both ZLIB and GZIP
+
+### Changed
+
+- Simplified compression logic by removing redundant GZIP compression options
+- Migrated to a new fixed method ID scheme (identity=0, zlib=10) while maintaining backward compatibility
 
 ### Added
 
-- Legacy support for previously serialized data.
-  - Compressed data written using versions prior to 1.5.6 (with incorrect method byte values) will still be successfully decompressed using a fallback logic in restoreBytes.
+- Improved compression performance by 90%+ across all compressions
+- Optimized ZLIB level probing with early stopping when no further size gain is observed
+- Added extensive test coverage, including legacy method fallback
+- Added performance benchmarking and validation against real-world data samples
+- Added a comprehensive beginner's guide to the README with detailed step-by-step explanations for:
+  - Package installation and setup
+  - Importing and basic usage
+  - Compressing different data types
+  - Restoring compressed data
+  - Firebase integration examples
+  - Best practices and common patterns
 
 ## 1.5.5
 

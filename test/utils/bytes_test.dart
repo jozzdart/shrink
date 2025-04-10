@@ -1,10 +1,12 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:shrink/utils/bytes.dart';
 import 'package:archive/archive.dart';
 
 import '../generators/generators.dart';
 import '../logs/logs.dart';
+import '../json/json_data_loader.dart';
 
 // Set to false to disable logging in tests
 const bool enableLogging = true;
@@ -307,8 +309,8 @@ void main() {
       final methodByte = compressed[0];
 
       // Check that the method byte is in one of the valid ranges:
-      // 0 (identity), 19-27 (zlib), or 28-36 (gzip)
-      expect(methodByte == 0 || (methodByte >= 19 && methodByte <= 36), isTrue,
+      // 0 (identity) or 10 (zlib)
+      expect(methodByte == 0 || methodByte == 10, isTrue,
           reason: 'Method byte ($methodByte) outside valid ranges');
 
       // For repetitive data, the method byte should not be 0 (identity)
@@ -323,7 +325,7 @@ void main() {
       // Create compressible data
       final testData = Uint8List.fromList(List.generate(2000, (i) => i % 20));
 
-      // Create mock entries for legacy compression methods (1-9)
+      // Create results collection
       final results = <String, CompressionTestResult>{};
 
       // Helper function to manually compress with a specific method
@@ -338,11 +340,10 @@ void main() {
 
       // Test all compression methods
       final zLibEncoder = ZLibEncoder();
-      final gZipEncoder = GZipEncoder();
 
-      // Test ZLIB compression (levels 1-9)
-      for (int level = 1; level <= 9; level++) {
-        final methodByte = 19 + (level - 1); // ZLIB method bytes: 19-27
+      // Test ZLIB compression (levels 4-9)
+      for (int level = 4; level <= 9; level++) {
+        final methodByte = 10; // ZLIB method byte is always 10
 
         final compressed = manualCompress(testData, methodByte,
             (data) => zLibEncoder.encode(data, level: level));
@@ -353,27 +354,6 @@ void main() {
         final compressionRatio = testData.length / compressed.length;
 
         results['ZLIB (level $level)'] = CompressionTestResult(
-          methodByte: methodByte,
-          compressedSize: compressed.length,
-          originalSize: testData.length,
-          compressionRatio: compressionRatio,
-          isCorrect: isCorrect,
-        );
-      }
-
-      // Test GZIP compression (levels 1-9)
-      for (int level = 1; level <= 9; level++) {
-        final methodByte = 28 + (level - 1); // GZIP method bytes: 28-36
-
-        final compressed = manualCompress(testData, methodByte,
-            (data) => gZipEncoder.encode(data, level: level));
-
-        final restored = restoreBytes(compressed);
-
-        final isCorrect = listEquals(restored, testData);
-        final compressionRatio = testData.length / compressed.length;
-
-        results['GZIP (level $level)'] = CompressionTestResult(
           methodByte: methodByte,
           compressedSize: compressed.length,
           originalSize: testData.length,
@@ -558,10 +538,8 @@ void main() {
         String methodName;
         if (methodByte == 0) {
           methodName = 'Identity';
-        } else if (methodByte >= 19 && methodByte <= 27) {
-          methodName = 'ZLIB (level ${methodByte - 18})';
-        } else if (methodByte >= 28 && methodByte <= 36) {
-          methodName = 'GZIP (level ${methodByte - 27})';
+        } else if (methodByte == 10) {
+          methodName = 'ZLIB';
         } else {
           methodName = 'Unknown';
         }
@@ -597,8 +575,18 @@ void main() {
       }
     });
 
-    test('Performance comparison across all compression methods', () {
+    test('Performance comparison across all compression methods', () async {
       var logger = LogsGroup.empty();
+
+      // Load JSON data for comparison
+      final jsonList1 = await JsonDataLoader.loadJson(index: 1);
+      final jsonBytes1 = utf8.encode(jsonEncode(jsonList1));
+      final jsonUint8List1 = Uint8List.fromList(jsonBytes1);
+
+      // Load second JSON data file
+      final jsonList2 = await JsonDataLoader.loadJson(index: 2);
+      final jsonBytes2 = utf8.encode(jsonEncode(jsonList2));
+      final jsonUint8List2 = Uint8List.fromList(jsonBytes2);
 
       // Test data types with different compression characteristics
       final testDataTypes = [
@@ -615,6 +603,8 @@ void main() {
                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ')
                 .join()
                 .codeUnits)),
+        _BytesTestInfo('JSON (1)', jsonUint8List1),
+        _BytesTestInfo('JSON (2)', jsonUint8List2),
       ];
 
       logger.addLogs(['# Compression Performance Benchmark']);
@@ -630,7 +620,6 @@ void main() {
       ]);
 
       final zLibEncoder = ZLibEncoder();
-      final gZipEncoder = GZipEncoder();
 
       for (final dataType in testDataTypes) {
         final originalSize = dataType.data.length;
@@ -664,9 +653,9 @@ void main() {
 
         expect(listEquals(identityRestored, dataType.data), isTrue);
 
-        // Test all ZLIB levels
-        for (int level = 1; level <= 9; level++) {
-          final methodByte = 19 + (level - 1); // ZLIB method bytes: 19-27
+        // Test ZLIB levels 4-9
+        for (int level = 4; level <= 9; level++) {
+          final methodByte = 10; // ZLIB method byte is always 10
 
           // Measure compression time
           final compressionStopwatch = Stopwatch()..start();
@@ -700,42 +689,6 @@ void main() {
           expect(listEquals(restored, dataType.data), isTrue);
         }
 
-        // Test all GZIP levels
-        for (int level = 1; level <= 9; level++) {
-          final methodByte = 28 + (level - 1); // GZIP method bytes: 28-36
-
-          // Measure compression time
-          final compressionStopwatch = Stopwatch()..start();
-          final gzipCompressed =
-              gZipEncoder.encode(dataType.data, level: level);
-          final compressionTime =
-              compressionStopwatch.elapsedMicroseconds / 1000000;
-          compressionStopwatch.stop();
-
-          // Create compressed data with method byte
-          final compressed = Uint8List(gzipCompressed.length + 1);
-          compressed[0] = methodByte;
-          compressed.setRange(1, compressed.length, gzipCompressed);
-
-          // Measure decompression time
-          final decompressionStopwatch = Stopwatch()..start();
-          final restored = restoreBytes(compressed);
-          final decompressionTime =
-              decompressionStopwatch.elapsedMicroseconds / 1000000;
-          decompressionStopwatch.stop();
-
-          // Calculate metrics
-          final compressionSpeed = originalSizeMB / compressionTime;
-          final decompressionSpeed = originalSizeMB / decompressionTime;
-          final compressionRatio = originalSize / compressed.length;
-
-          logger.addLogs([
-            '| ${dataType.name} | GZIP (level $level) | $methodByte | ${compressionSpeed.toStringAsFixed(2)} | ${decompressionSpeed.toStringAsFixed(2)} | ${compressionRatio.toStringAsFixed(2)}x | ${compressed.length} |'
-          ]);
-
-          expect(listEquals(restored, dataType.data), isTrue);
-        }
-
         // Finally, test shrinkBytes (which should select the optimal method)
         final shrinkStopwatch = Stopwatch()..start();
         final shrunken = shrinkBytes(dataType.data);
@@ -746,10 +699,8 @@ void main() {
         String methodName;
         if (selectedMethod == 0) {
           methodName = 'Identity';
-        } else if (selectedMethod >= 19 && selectedMethod <= 27) {
-          methodName = 'ZLIB (level ${selectedMethod - 18})';
-        } else if (selectedMethod >= 28 && selectedMethod <= 36) {
-          methodName = 'GZIP (level ${selectedMethod - 27})';
+        } else if (selectedMethod == 10) {
+          methodName = 'ZLIB';
         } else {
           methodName = 'Unknown';
         }
@@ -795,6 +746,60 @@ void main() {
           ['  * For storage/bandwidth-critical: Higher compression levels']);
       logger.addLogs([
         '  * The shrinkBytes function automatically selects the best method based on size'
+      ]);
+
+      if (enableLogging) {
+        logger.printAll();
+      }
+    });
+
+    test('Compression and decompression with JSON test data', () async {
+      var logger = LogsGroup.empty();
+
+      // Load JSON data using JsonDataLoader
+      final jsonList = await JsonDataLoader.loadJson(index: 1);
+
+      // Convert JSON to bytes - the data is a list of objects
+      final jsonBytes = utf8.encode(jsonEncode(jsonList));
+
+      // Test compression and decompression
+      final jsonUint8List = Uint8List.fromList(jsonBytes);
+
+      // Compress the JSON data
+      final shrunken = shrinkBytes(jsonUint8List);
+      final methodByte = shrunken[0];
+
+      // Decompress the JSON data
+      final restored = restoreBytes(shrunken);
+
+      // Verify the data is correctly restored
+      expect(listEquals(restored, jsonUint8List), isTrue,
+          reason:
+              'Failed to restore JSON data of length ${jsonUint8List.length}');
+
+      // Calculate compression metrics
+      final compressionRatio = jsonUint8List.length / shrunken.length;
+
+      // Determine which compression method was used
+      String methodName;
+      if (methodByte == 0) {
+        methodName = 'Identity';
+      } else if (methodByte == 10) {
+        methodName = 'ZLIB';
+      } else {
+        methodName = 'Unknown';
+      }
+
+      // Log the results
+      logger.addLogs(['JSON Data Compression Test Results:']);
+      logger.addLogs([
+        '| Data | Method | Method Byte | Original Size | Compressed Size | Ratio |'
+      ]);
+      logger.addLogs([
+        '|------|--------|-------------|---------------|-----------------|-------|'
+      ]);
+      logger.addLogs([
+        '| JSON | $methodName | $methodByte | ${jsonUint8List.length} | ${shrunken.length} | ${compressionRatio.toStringAsFixed(2)}x |'
       ]);
 
       if (enableLogging) {

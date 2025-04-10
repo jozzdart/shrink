@@ -8,18 +8,9 @@ import 'package:shrink/utils/utils.dart' as utils;
 /// These extension methods make it more convenient to work with compressed data
 /// by allowing method chaining and providing a more fluent API.
 extension ShrinkExtensionsBytes on Uint8List {
-  /// Compresses this [Uint8List] using multiple compression algorithms and selects the best result.
+  /// Compresses bytes using zlib compression.
   ///
-  /// This method tries different compression methods and levels to find the optimal compression:
-  /// - No compression (identity) - used when compression would increase size
-  /// - ZLIB compression with levels 1-9
-  /// - GZIP compression with levels 1-9
-  ///
-  /// The first byte of the returned [Uint8List] indicates the compression method used,
-  /// followed by the compressed data.
-  ///
-  /// Returns a compressed [Uint8List] using the most efficient method for the input data.
-  /// The compression is lossless - the original data can be fully restored.
+  /// Returns compressed data that can be restored with [restoreBytes].
   Uint8List shrink() => utils.shrinkBytes(this);
 
   /// Converts this [Uint8List] to a base64-encoded string.

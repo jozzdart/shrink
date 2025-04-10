@@ -1,51 +1,48 @@
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
 
-/// Compresses a [Uint8List] using multiple compression algorithms and selects the best result.
-///
-/// This function tries different compression methods and levels to find the optimal compression:
-///
-/// - No compression (identity) - used when compression would increase size
-/// - ZLIB compression with levels 1-9
-/// - GZIP compression with levels 1-9
-///
-/// The first byte of the returned [Uint8List] indicates the compression method used,
-/// followed by the compressed data.
-///
-/// Returns a compressed [Uint8List] using the most efficient method for the input data.
-/// The compression is lossless - the original data can be fully restored.
+/// Compresses a [Uint8List] using the optimal compression method.
+/// Returns a [Uint8List] with a method byte prefix followed by compressed data.
+/// Compression is lossless and can be reversed with restoreBytes().
 Uint8List shrinkBytes(Uint8List bytes) {
   // Start by assuming "no compression" is best (identity).
   int bestMethod = _CompressionMethod.identity;
   List<int> bestData = bytes;
 
+  // Start attempt at zlib level 4.
   final zLibEncoder = ZLibEncoder();
-  final gZipEncoder = GZipEncoder();
 
-  // Try ZLIB levels
-  for (int level = 1; level <= 9; level++) {
-    try {
-      final encoded = zLibEncoder.encode(bytes, level: level);
-      if (encoded.length < bestData.length) {
-        bestMethod = _CompressionMethod.zlib1 + (level - 1);
-        bestData = encoded;
-      }
-    } catch (_) {
-      // Skip if compression fails at this level
-    }
-  }
+  // Start at zlib level 4.
+  const startLevel = 4;
+  const endLevel = 9;
 
-  // Try GZIP levels
-  for (int level = 1; level <= 9; level++) {
-    try {
-      final encoded = gZipEncoder.encode(bytes, level: level);
-      if (encoded.length < bestData.length) {
-        bestMethod = _CompressionMethod.gzip1 + (level - 1);
-        bestData = encoded;
+  try {
+    // First try level 4
+    final level4Result = zLibEncoder.encode(bytes, level: startLevel);
+    if (level4Result.length < bestData.length) {
+      // If level 4 is beneficial, adopt it and set method=10 (zlib)
+      bestMethod = _CompressionMethod.zlib; // We'll always use 10
+      bestData = level4Result;
+
+      // Now try levels 5..9, but still store method=10 if improved
+      for (int level = startLevel + 1; level <= endLevel; level++) {
+        try {
+          final encoded = zLibEncoder.encode(bytes, level: level);
+          if (encoded.length < bestData.length) {
+            // Update only the bestData, keep bestMethod as 10
+            bestData = encoded;
+          } else {
+            // No improvement => stop checking further levels
+            break;
+          }
+        } catch (_) {
+          break; // If something goes wrong, keep current best
+        }
       }
-    } catch (_) {
-      // Skip if compression fails at this level
     }
+    // If level 4 wasn't better, remain identity (0).
+  } catch (_) {
+    // If zlib fails at all, remain identity.
   }
 
   // Build the final [Uint8List]: method byte + compressed bytes
@@ -57,20 +54,13 @@ Uint8List shrinkBytes(Uint8List bytes) {
 
 /// Decompresses a [Uint8List] that was compressed by [shrinkBytes].
 ///
-/// This function reads the compression method from the first byte and applies
-/// the appropriate decompression algorithm:
+/// Reads the compression method from the first byte and applies the appropriate
+/// decompression algorithm. Supports legacy compression methods from versions
+/// prior to 1.5.6.
 ///
-/// - Identity (no compression)
-/// - ZLIB decompression for ZLIB-compressed data
-/// - GZIP decompression for GZIP-compressed data
-///
-/// It also supports legacy compression methods from versions prior to 1.5.6,
-/// where method bytes 1-9 were used for both ZLIB and GZIP compression.
-///
-/// Returns the original, uncompressed [Uint8List].
-/// Throws [ArgumentError] if the input is empty.
-/// Throws [UnsupportedError] if the compression method is unknown.
-/// May throw [FormatException] if the compressed data is corrupted.
+/// Returns the original uncompressed data.
+/// Throws [ArgumentError] if input is empty, [UnsupportedError] for unknown
+/// compression methods, or [FormatException] if data is corrupted.
 Uint8List restoreBytes(Uint8List bytes) {
   if (bytes.isEmpty) {
     throw ArgumentError('Input is empty');
@@ -84,17 +74,15 @@ Uint8List restoreBytes(Uint8List bytes) {
   }
 
   final zLibDecoder = ZLibDecoder();
-  final gZipDecoder = GZipDecoder();
 
-  if (_CompressionMethod.isZlib(method)) {
+  if (method == _CompressionMethod.zlib) {
     return Uint8List.fromList(zLibDecoder.decodeBytes(data));
-  } else if (_CompressionMethod.isGzip(method)) {
-    return Uint8List.fromList(gZipDecoder.decodeBytes(data));
   } else if (_CompressionMethod.isLegacy(method)) {
-    // Handle old/legacy compression (try zlib, then gzip)
+    // Legacy 1..9 could be zlib or gzip, try zlib first, then gzip.
     try {
       return Uint8List.fromList(zLibDecoder.decodeBytes(data));
     } catch (_) {
+      final gZipDecoder = GZipDecoder();
       try {
         return Uint8List.fromList(gZipDecoder.decodeBytes(data));
       } catch (e) {
@@ -109,18 +97,14 @@ Uint8List restoreBytes(Uint8List bytes) {
 /// Defines both legacy and current compression method IDs.
 /// Legacy ones are still recognized in [restoreBytes], but are no longer written by [shrinkBytes].
 class _CompressionMethod {
-  // Legacy IDs (for backward compatibility before the 1.5.6 fix)
+  static const int identity = 0;
+
+  // Legacy range for backward compatibility
   static const int legacyStart = 1;
   static const int legacyEnd = 9;
 
-  static const int identity = 0;
-  static const int zlib1 = 19;
-  static const int zlib9 = 27;
-  static const int gzip1 = 28;
-  static const int gzip9 = 36;
+  static const int zlib = 10;
 
   static bool isLegacy(int method) =>
       method >= legacyStart && method <= legacyEnd;
-  static bool isZlib(int method) => method >= zlib1 && method <= zlib9;
-  static bool isGzip(int method) => method >= gzip1 && method <= gzip9;
 }
