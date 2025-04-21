@@ -2,6 +2,10 @@
 
 All notable changes to the `shrink` package will be documented in this file.
 
+## 1.5.9
+
+- Fixed root repository pubspec colliding with the package pubspec
+
 ## 1.5.8
 
 - Updated `repository`, `homepage`, and `issue_tracker` fields in pubspec.yaml
