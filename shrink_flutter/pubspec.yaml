@@ -1,0 +1,28 @@
+name: shrink_flutter
+description: Flutter utilities for the `shrink` package
+version: 0.0.2
+homepage: https://github.com/jozzzzep/shrink
+repository: https://github.com/jozzzzep/shrink
+issue_tracker: https://github.com/jozzzzep/shrink/issues
+topics:
+  - compress
+  - compression
+  - simple
+  - firebase
+  - easy
+
+environment:
+  sdk: ^3.7.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shrink: ^1.5.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
