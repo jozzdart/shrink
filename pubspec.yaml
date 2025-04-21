@@ -1,4 +1,4 @@
-name: shrink
+name: shrink_repo
 publish_to: none
 
 environment:

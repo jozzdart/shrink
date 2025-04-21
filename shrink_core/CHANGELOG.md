@@ -2,6 +2,15 @@
 
 All notable changes to the `shrink` package will be documented in this file.
 
+## 1.5.9
+
+- Fixed root repository pubspec colliding with the package pubspec
+
+## 1.5.8
+
+- Updated `repository`, `homepage`, and `issue_tracker` fields in pubspec.yaml
+- Ensures correct links are shown on pub.dev and GitHub
+
 ## 1.5.7
 
 - Refactored the internal compression method selection logic for better maintainability
