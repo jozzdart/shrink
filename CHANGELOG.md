@@ -2,6 +2,11 @@
 
 All notable changes to the `shrink` package will be documented in this file.
 
+## 1.5.7
+
+- Refactored the internal compression method selection logic for better maintainability
+- Improved the handling of compression method identification for more consistent behavior
+
 ## 1.5.6
 
 ### Fixed
