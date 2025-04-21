@@ -1,0 +1,8 @@
+name: shrink
+publish_to: none
+
+environment:
+  sdk: "^3.7.0"
+
+dev_dependencies:
+  melos: ^6.3.2
