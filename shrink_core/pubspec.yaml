@@ -1,6 +1,6 @@
 name: shrink
 description: "Effortless, one-line compression. Just call shrink and save 5x-40x in size. Optimized for Firebase, JSON, structured data, or anything you want to shrink!"
-version: 1.5.6
+version: 1.5.7
 homepage: https://github.com/jozzzzep/shrink
 repository: https://github.com/jozzzzep/shrink
 issue_tracker: https://github.com/jozzzzep/shrink/issues
