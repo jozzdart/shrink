@@ -5,51 +5,8 @@ import 'package:archive/archive.dart';
 /// Returns a [Uint8List] with a method byte prefix followed by compressed data.
 /// Compression is lossless and can be reversed with restoreBytes().
 Uint8List shrinkBytes(Uint8List bytes) {
-  // Start by assuming "no compression" is best (identity).
-  int bestMethod = _CompressionMethod.identity;
-  List<int> bestData = bytes;
-
-  // Start attempt at zlib level 4.
-  final zLibEncoder = ZLibEncoder();
-
-  // Start at zlib level 4.
-  const startLevel = 4;
-  const endLevel = 9;
-
-  try {
-    // First try level 4
-    final level4Result = zLibEncoder.encode(bytes, level: startLevel);
-    if (level4Result.length < bestData.length) {
-      // If level 4 is beneficial, adopt it and set method=10 (zlib)
-      bestMethod = _CompressionMethod.zlib; // We'll always use 10
-      bestData = level4Result;
-
-      // Now try levels 5..9, but still store method=10 if improved
-      for (int level = startLevel + 1; level <= endLevel; level++) {
-        try {
-          final encoded = zLibEncoder.encode(bytes, level: level);
-          if (encoded.length < bestData.length) {
-            // Update only the bestData, keep bestMethod as 10
-            bestData = encoded;
-          } else {
-            // No improvement => stop checking further levels
-            break;
-          }
-        } catch (_) {
-          break; // If something goes wrong, keep current best
-        }
-      }
-    }
-    // If level 4 wasn't better, remain identity (0).
-  } catch (_) {
-    // If zlib fails at all, remain identity.
-  }
-
-  // Build the final [Uint8List]: method byte + compressed bytes
-  final result = Uint8List(bestData.length + 1);
-  result[0] = bestMethod;
-  result.setRange(1, result.length, bestData);
-  return result;
+  final _BestCompressionResult best = _tryZlibCompression(bytes);
+  return _buildFinalResult(best.method, best.data);
 }
 
 /// Decompresses a [Uint8List] that was compressed by [shrinkBytes].
@@ -107,4 +64,54 @@ class _CompressionMethod {
 
   static bool isLegacy(int method) =>
       method >= legacyStart && method <= legacyEnd;
+}
+
+class _BestCompressionResult {
+  final int method;
+  final List<int> data;
+  const _BestCompressionResult(this.method, this.data);
+}
+
+/// Attempts ZLib compression across levels 4 to 9.
+/// Returns the best result while keeping method ID consistent.
+_BestCompressionResult _tryZlibCompression(Uint8List bytes) {
+  int bestMethod = _CompressionMethod.identity;
+  List<int> bestData = bytes;
+
+  final zLibEncoder = ZLibEncoder();
+  const startLevel = 4;
+  const endLevel = 9;
+
+  try {
+    final level4 = zLibEncoder.encode(bytes, level: startLevel);
+    if (level4.length < bestData.length) {
+      bestMethod = _CompressionMethod.zlib;
+      bestData = level4;
+
+      for (int level = startLevel + 1; level <= endLevel; level++) {
+        try {
+          final encoded = zLibEncoder.encode(bytes, level: level);
+          if (encoded.length < bestData.length) {
+            bestData = encoded;
+          } else {
+            break;
+          }
+        } catch (_) {
+          break;
+        }
+      }
+    }
+  } catch (_) {
+    // Do nothing, fallback to identity
+  }
+
+  return _BestCompressionResult(bestMethod, bestData);
+}
+
+/// Prefixes compressed data with the method byte.
+Uint8List _buildFinalResult(int method, List<int> data) {
+  final result = Uint8List(data.length + 1);
+  result[0] = method;
+  result.setRange(1, result.length, data);
+  return result;
 }
