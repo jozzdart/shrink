@@ -1,3 +1,6 @@
+/// Provides asynchronous data compression utilities using Flutter's compute function.
+library;
+
 import 'package:flutter/foundation.dart';
 import 'package:shrink/utils/utils.dart';
 

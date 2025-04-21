@@ -1,3 +1,6 @@
+/// Provides asynchronous data restoration utilities using Flutter's compute function.
+library;
+
 import 'package:flutter/foundation.dart';
 import 'package:shrink/utils/utils.dart';
 
@@ -11,6 +14,12 @@ import 'package:shrink/utils/utils.dart';
 /// final decompressedText = await RestoreAsync.text(compressedTextBytes);
 /// final decompressedJson = await RestoreAsync.json(compressedJsonBytes);
 /// ```
+///
+/// This class provides static methods corresponding to the compression methods
+/// in `ShrinkAsync`, allowing restoration of data in separate isolates to avoid
+/// blocking the UI.
+///
+/// Always restores data compressed by the corresponding `ShrinkAsync.*` methods.
 abstract class RestoreAsync {
   /// Asynchronously decompresses a [Uint8List] that was compressed using [Shrink.bytes].
   ///
