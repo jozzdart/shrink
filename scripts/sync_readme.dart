@@ -2,7 +2,8 @@ import 'dart:io';
 
 void main() async {
   final source = File('shrink_core/README.md');
-  final target = File('shrink_flutter/README.md');
+  final flutterTarget = File('shrink_flutter/README.md');
+  final rootTarget = File('README.md'); // ✅ root-level README
 
   if (!await source.exists()) {
     stderr.writeln('❌ shrink_core/README.md not found.');
@@ -27,6 +28,9 @@ $content
 <!-- shrink:sync-end -->
 ''';
 
-  await target.writeAsString(result);
+  await flutterTarget.writeAsString(result);
   print('✅ shrink_flutter/README.md updated.');
+
+  await rootTarget.writeAsString(content);
+  print('✅ Root README.md updated from shrink_core.');
 }
