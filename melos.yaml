@@ -1,0 +1,13 @@
+# shrink/melos.yaml
+name: shrink_workspace
+packages:
+  - shrink_core
+  - shrink_flutter
+
+scripts:
+  analyze:
+    run: dart analyze .
+  format:
+    run: dart format .
+  sync_readme:
+    run: dart ./scripts/sync_readme.dart
