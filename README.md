@@ -2,8 +2,8 @@
 
 <h3 align="center"><i>Because every byte counts.</i></h3>
 <p align="center">
-        <img src="https://img.shields.io/codefactor/grade/github/jozztech/shrink/main?style=flat-square">
-        <img src="https://img.shields.io/github/license/jozztech/shrink?style=flat-square">
+        <img src="https://img.shields.io/codefactor/grade/github/jozzdart/shrink/main?style=flat-square">
+        <img src="https://img.shields.io/github/license/jozzdart/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/points/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/v/shrink?style=flat-square">
 </p>

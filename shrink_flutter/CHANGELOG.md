@@ -1,6 +1,7 @@
-# Changelog
+## 0.0.5
 
-All notable changes to the `shrink_flutter` package will be documented in this file.
+- Updated README.md
+- Moved internal files to `lib/src/` to improve encapsulation and API clarity
 
 ## 0.0.4
 
