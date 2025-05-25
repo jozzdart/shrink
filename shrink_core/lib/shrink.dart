@@ -8,6 +8,4 @@
 /// convenient extensions on various data types for even simpler usage.
 library;
 
-export 'utils/utils.dart';
-export 'extensions/extensions.dart';
-export 'core/core.dart';
+export 'src/shrink.dart';

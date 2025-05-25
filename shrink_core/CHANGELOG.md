@@ -1,6 +1,11 @@
-# Changelog
+## 1.5.11
 
-All notable changes to the `shrink` package will be documented in this file.
+- Fixed pub.dev link issues
+
+## 1.5.10
+
+- Updated README.md
+- Moved internal files to `lib/src/` to improve encapsulation and API clarity
 
 ## 1.5.9
 

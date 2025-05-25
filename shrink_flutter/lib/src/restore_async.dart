@@ -1,8 +1,5 @@
-/// Provides asynchronous data restoration utilities using Flutter's compute function.
-library;
-
 import 'package:flutter/foundation.dart';
-import 'package:shrink/utils/utils.dart';
+import 'package:shrink/shrink.dart';
 
 /// An asynchronous utility class for decompressing data that was compressed using the [Shrink] class.
 ///

@@ -1,3 +1,3 @@
 library;
 
-export 'core/core.dart';
+export 'src/shrink_flutter.dart';

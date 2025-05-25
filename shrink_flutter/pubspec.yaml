@@ -1,9 +1,9 @@
 name: shrink_flutter
 description: Flutter utilities for the `shrink` package, including async compression and future Flutter-specific tools. For core features, use `shrink`.
 version: 0.0.4
-homepage: https://github.com/jozzzzep/shrink
-repository: https://github.com/jozzzzep/shrink/tree/main/shrink_flutter
-issue_tracker: https://github.com/jozzzzep/shrink/issues
+homepage: https://github.com/jozztech/shrink
+repository: https://github.com/jozztech/shrink/tree/main/shrink_flutter
+issue_tracker: https://github.com/jozztech/shrink/issues
 topics:
   - compress
   - compression
