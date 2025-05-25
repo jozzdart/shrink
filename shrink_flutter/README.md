@@ -12,10 +12,15 @@ The following is adapted from the main [`shrink`](https://pub.dev/packages/shrin
 
 <h3 align="center"><i>Because every byte counts.</i></h3>
 <p align="center">
-        <img src="https://img.shields.io/codefactor/grade/github/jozzzzep/shrink/main?style=flat-square">
-        <img src="https://img.shields.io/github/license/jozzzzep/shrink?style=flat-square">
+        <img src="https://img.shields.io/codefactor/grade/github/jozztech/shrink/main?style=flat-square">
+        <img src="https://img.shields.io/github/license/jozztech/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/points/shrink?style=flat-square">
         <img src="https://img.shields.io/pub/v/shrink?style=flat-square">
+</p>
+<p align="center">
+  <a href="https://buymeacoffee.com/yosefd99v" target="https://buymeacoffee.com/yosefd99v">
+    <img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-Support (:-blue?logo=buymeacoffee&style=flat-square" />
+  </a>
 </p>
 
 Compress any data in one line — no setup, no boilerplate, and nothing to configure. It automatically detects if compression is beneficial, chooses the most efficient method, and keeps everything fully lossless. Typical savings range from 5× to 40×, and can reach 1,000× or more with structured data. Ideal for reducing size in Firebase, speeding up local storage, and optimizing for low-bandwidth environments.
@@ -602,6 +607,12 @@ The `shrink` package is actively maintained and will continue to evolve with new
 ---
 
 ## 🔗 License MIT © Jozz
+
+<p align="center">
+  <a href="https://buymeacoffee.com/yosefd99v" target="https://buymeacoffee.com/yosefd99v">
+    ☕ Enjoying this package? You can support it here.
+  </a>
+</p>
 
 
 <!-- shrink:sync-end -->
