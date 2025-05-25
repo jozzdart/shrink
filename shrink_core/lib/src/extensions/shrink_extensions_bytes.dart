@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:shrink/utils/utils.dart' as utils;
+import '../utils/utils.dart' as utils;
 
 /// Extensions on [Uint8List] for compression and decompression operations.
 ///

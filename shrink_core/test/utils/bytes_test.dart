@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:test/test.dart';
-import 'package:shrink/utils/bytes.dart';
+import 'package:shrink/shrink.dart';
 import 'package:archive/archive.dart';
 
 import '../generators/generators.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:test/test.dart';
-import 'package:shrink/utils/json.dart';
+import 'package:shrink/shrink.dart';
 
 import '../generators/generators.dart';
 import '../logs/logs.dart';

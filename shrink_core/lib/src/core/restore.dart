@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:shrink/utils/utils.dart';
+import '../utils/utils.dart';
 
 /// A utility class for decompressing data that was compressed using the [Shrink] class.
 ///

@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shrink/core/restore.dart'; // Use synchronous Restore for verification
-import 'package:shrink/utils/utils.dart';
+import 'package:shrink/shrink.dart';
 import 'package:shrink_flutter/shrink_flutter.dart'; // For UniqueCompressionMethod
 
 void main() {
