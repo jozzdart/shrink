@@ -1,3 +1,7 @@
+## 1.5.12
+
+- Updated README
+
 ## 1.5.11
 
 - Fixed pub.dev link issues
