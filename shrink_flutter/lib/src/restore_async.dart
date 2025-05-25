@@ -1,6 +1,3 @@
-/// Provides asynchronous data restoration utilities using Flutter's compute function.
-library;
-
 import 'package:flutter/foundation.dart';
 import 'package:shrink/shrink.dart';
 
