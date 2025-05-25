@@ -18,7 +18,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shrink: ^1.5.11
+  shrink: ^1.5.7
 
 dev_dependencies:
   flutter_test:
