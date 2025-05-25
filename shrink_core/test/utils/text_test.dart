@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:shrink/utils/text.dart';
+import 'package:shrink/shrink.dart';
 
 import '../generators/generators.dart';
 

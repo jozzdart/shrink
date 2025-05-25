@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:shrink/utils/bytes.dart';
+import 'bytes.dart';
 
 /// Compresses a string using UTF-8 encoding and zlib compression.
 ///

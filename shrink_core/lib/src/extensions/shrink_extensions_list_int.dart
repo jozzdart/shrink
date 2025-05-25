@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:shrink/utils/list/unique.dart';
-import 'package:shrink/utils/utils.dart' as utils;
+import '../utils/list/unique.dart';
+import '../utils/utils.dart' as utils;
 
 /// Extensions on [List<int>] for compressing unique integer lists.
 ///

@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:shrink/utils/list/unique.dart';
+import 'package:shrink/shrink.dart';
 
 import '../list_test_data_generator.dart';
 

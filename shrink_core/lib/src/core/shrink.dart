@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:shrink/utils/utils.dart';
+import '../utils/utils.dart';
 
 /// A utility class for compressing different types of data.
 ///

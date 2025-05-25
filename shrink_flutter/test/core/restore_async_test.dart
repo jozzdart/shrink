@@ -2,7 +2,7 @@ import 'dart:io'; // Added for ZLibEncoder
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shrink/core/core.dart';
+import 'package:shrink/shrink.dart';
 import 'package:shrink_flutter/shrink_flutter.dart';
 
 void main() {
