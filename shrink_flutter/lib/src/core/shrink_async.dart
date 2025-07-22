@@ -92,20 +92,33 @@ abstract class ShrinkAsync {
     return compute(_shrinkUniqueManualIsolate, args);
   }
 
-  /// Asynchronously compresses an image [File] using the default shrink settings.
+  /// Compresses an image file using [flutter_image_compress].
   ///
-  /// This is a convenience wrapper around [shrinkImage] for plug-and-play compression.
+  /// Returns a new [File] containing the compressed image, or `null` if compression fails.
   ///
-  /// If compression fails, returns `null`.
+  /// Parameters:
+  /// - [file]: The original image to compress.
+  /// - [quality]: JPEG/WebP/HEIC quality (0–100). Defaults to `70`.
+  /// - [minWidth], [minHeight]: Optional resizing dimensions. Defaults to `720x720`.
+  /// - [format]: Output image format. Defaults to [CompressFormat.jpeg].
+  /// - [inSampleSize]: The sample size for the image. Defaults to `1`.
+  /// - [rotate]: The rotation of the image. Defaults to `0`.
+  /// - [autoCorrectionAngle]: Whether to automatically correct the angle of the image. Defaults to `true`.
+  /// - [keepExif]: Whether to keep the EXIF data of the image. Defaults to `false`.
+  /// - [numberOfRetries]: The number of times to retry the compression. Defaults to `5`.
   ///
-  /// This function is not run in an isolate because image compression uses platform
-  /// channels and file I/O, which must run on the main thread.
+  /// Returns a new [File] containing the compressed image, or `null` if compression fails.
   static Future<File?> image(
     File file, {
-    CompressFormat format = CompressFormat.jpeg,
     int quality = 70,
     int minWidth = 720,
     int minHeight = 720,
+    CompressFormat format = CompressFormat.jpeg,
+    int inSampleSize = 1,
+    int rotate = 0,
+    bool autoCorrectionAngle = true,
+    bool keepExif = false,
+    int numberOfRetries = 5,
   }) =>
       shrinkImage(
         file,
@@ -113,6 +126,11 @@ abstract class ShrinkAsync {
         quality: quality,
         minWidth: minWidth,
         minHeight: minHeight,
+        inSampleSize: inSampleSize,
+        rotate: rotate,
+        autoCorrectionAngle: autoCorrectionAngle,
+        keepExif: keepExif,
+        numberOfRetries: numberOfRetries,
       );
 }
 
