@@ -106,15 +106,14 @@ abstract class ShrinkAsync {
     int quality = 70,
     int minWidth = 720,
     int minHeight = 720,
-  }) async {
-    return shrinkImage(
-      file,
-      format: format,
-      quality: quality,
-      minWidth: minWidth,
-      minHeight: minHeight,
-    );
-  }
+  }) =>
+      shrinkImage(
+        file,
+        format: format,
+        quality: quality,
+        minWidth: minWidth,
+        minHeight: minHeight,
+      );
 }
 
 // --- Isolate wrappers ---
