@@ -19,6 +19,7 @@ dependencies:
   flutter:
     sdk: flutter
   shrink: ^1.5.12
+  flutter_image_compress: ^2.4.0
 
 dev_dependencies:
   flutter_test:

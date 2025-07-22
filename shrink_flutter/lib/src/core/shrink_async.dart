@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:shrink/shrink.dart';
 
@@ -87,6 +89,8 @@ abstract class ShrinkAsync {
   static Future<Uint8List> uniqueManual(UniqueManualArgs args) {
     return compute(_shrinkUniqueManualIsolate, args);
   }
+
+  static Future<File?> image(File image) async {}
 }
 
 // --- Isolate wrappers ---
