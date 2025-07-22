@@ -1,1 +1,1 @@
-export 'shrink_extension_image.dart';
+export 'image.dart';
