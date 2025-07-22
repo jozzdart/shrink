@@ -1,4 +1,4 @@
 # melos_managed_dependency_overrides: shrink
 dependency_overrides:
   shrink:
-    path: ..\\shrink_core
+    path: ../shrink_core
