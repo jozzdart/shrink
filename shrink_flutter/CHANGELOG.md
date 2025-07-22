@@ -1,3 +1,11 @@
+# 0.0.6
+
+- Improved shrink_flutter folder structure
+- Added test folders
+- Generated barrel files
+- Added image compression utilities, extensions and connected to ShrinkAsync
+- Fixed failing tests
+
 ## 0.0.5
 
 - Updated README.md

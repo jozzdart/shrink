@@ -33,11 +33,13 @@ Uint8List restoreBytes(Uint8List bytes) {
   final zLibDecoder = ZLibDecoder();
 
   if (method == _CompressionMethod.zlib) {
-    return Uint8List.fromList(zLibDecoder.decodeBytes(data));
+    final decodedData = zLibDecoder.decodeBytes(data);
+    return Uint8List.fromList(decodedData);
   } else if (_CompressionMethod.isLegacy(method)) {
     // Legacy 1..9 could be zlib or gzip, try zlib first, then gzip.
     try {
-      return Uint8List.fromList(zLibDecoder.decodeBytes(data));
+      final decodedData = zLibDecoder.decodeBytes(data);
+      return Uint8List.fromList(decodedData);
     } catch (_) {
       final gZipDecoder = GZipDecoder();
       try {
