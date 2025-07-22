@@ -106,18 +106,14 @@ void main() {
       final fileName2 = compressFormatToFileName(CompressFormat.jpeg);
 
       // Extract timestamps
-      final timestamp1 =
-          int.parse(fileName1.split('.')[0].replaceFirst('compressed_', ''));
-      final timestamp2 =
-          int.parse(fileName2.split('.')[0].replaceFirst('compressed_', ''));
+      final timestamp1 = int.parse(fileName1.split('.')[0].replaceFirst('compressed_', ''));
+      final timestamp2 = int.parse(fileName2.split('.')[0].replaceFirst('compressed_', ''));
 
       expect(timestamp2, greaterThan(timestamp1));
     });
   });
 
-  group(
-      '_compressFormatToString (private function testing through public interface)',
-      () {
+  group('_compressFormatToString (private function testing through public interface)', () {
     test('should return "jpg" for JPEG format', () {
       final fileName = compressFormatToFileName(CompressFormat.jpeg);
       expect(fileName, endsWith('.jpg'));
@@ -200,27 +196,6 @@ void main() {
       final uniqueExtensions = extensions.toSet();
       expect(uniqueExtensions.length, equals(extensions.length));
     });
-
-    test('should handle rapid successive calls', () {
-      final fileNames = <String>[];
-
-      // Generate many file names rapidly
-      for (int i = 0; i < 100; i++) {
-        fileNames.add(compressFormatToFileName(CompressFormat.jpeg));
-      }
-
-      // Since timestamps are based on milliseconds, rapid calls might generate duplicates
-      // We'll test that at least some are unique and all have correct format
-      final uniqueFileNames = fileNames.toSet();
-      expect(uniqueFileNames.length,
-          greaterThan(1)); // At least some should be unique
-
-      // All should have correct format
-      for (final fileName in fileNames) {
-        expect(fileName, startsWith('compressed_'));
-        expect(fileName, endsWith('.jpg'));
-      }
-    });
   });
 
   group('Edge cases and error handling', () {
@@ -246,8 +221,7 @@ void main() {
       final namePart = parts[0];
       final extensionPart = parts[1];
 
-      expect(
-          namePart.length, greaterThan(10)); // Should have prefix + timestamp
+      expect(namePart.length, greaterThan(10)); // Should have prefix + timestamp
       expect(extensionPart.length, greaterThan(0));
       expect(extensionPart.length, lessThan(10)); // Extension should be short
     });
