@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:shrink/shrink.dart';
+import 'package:shrink_flutter/src/utils/image.dart';
 
 /// An asynchronous utility class for compressing different types of data without blocking the UI.
 ///
@@ -90,7 +92,29 @@ abstract class ShrinkAsync {
     return compute(_shrinkUniqueManualIsolate, args);
   }
 
-  static Future<File?> image(File image) async {}
+  /// Asynchronously compresses an image [File] using the default shrink settings.
+  ///
+  /// This is a convenience wrapper around [shrinkImage] for plug-and-play compression.
+  ///
+  /// If compression fails, returns `null`.
+  ///
+  /// This function is not run in an isolate because image compression uses platform
+  /// channels and file I/O, which must run on the main thread.
+  static Future<File?> image(
+    File file, {
+    CompressFormat format = CompressFormat.jpeg,
+    int quality = 70,
+    int minWidth = 720,
+    int minHeight = 720,
+  }) async {
+    return shrinkImage(
+      file,
+      format: format,
+      quality: quality,
+      minWidth: minWidth,
+      minHeight: minHeight,
+    );
+  }
 }
 
 // --- Isolate wrappers ---
